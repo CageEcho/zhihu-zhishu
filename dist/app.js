@@ -79,6 +79,10 @@
 
   function renderHome() {
     syncNavCounts();
+    const ready = state.userSources.length > 0;
+    $('#start-tree-button').disabled = !ready;
+    $('#start-tree-button').title = ready ? `已载入 ${state.userSources.length} 条收藏内容` : '请先添加至少一条收藏内容';
+    $('#start-tree-button').setAttribute('aria-label', ready ? `启动知树，已载入 ${state.userSources.length} 条收藏内容` : '启动知树，请先添加收藏内容');
   }
 
   function renderTopic(topic) {
@@ -574,6 +578,11 @@
       $('#tree-note').hidden = false;
     },
     profile: () => showDialog('演示账户', `<p>这是一套本机 DEMO 数据，不代表真实知乎账号状态。</p><div class="profile-stats"><div><b>${12 + state.userSources.length + state.adoptedRoots.length}</b><span>条根系</span></div><div><b>${state.works.length}</b><span>篇作品</span></div><div><b>${state.publishedWorkIds.length}</b><span>颗公开果实</span></div></div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    'start-user-tree': () => {
+      if (!state.userSources.length) return;
+      toast(`已载入 ${state.userSources.length} 条收藏内容，开始梳理观点。`);
+      startThinking(DATA.topics[0]);
+    },
     'go-thinking': () => state.session ? (location.hash = 'thinking') : startThinking(DATA.topics[0]),
     'start-thinking': () => startThinking(currentTopic),
     'confirm-new': (button) => {
@@ -792,8 +801,9 @@
     save();
     closeDialog();
     syncNavCounts();
-    location.hash = 'favorites';
-    toast('收藏内容已加入根系。');
+    location.hash = 'home';
+    renderHome();
+    toast('收藏内容已加入根系，“启动知树”已经点亮。');
   });
 
   document.addEventListener('input', (event) => {
