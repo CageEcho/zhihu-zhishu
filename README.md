@@ -20,6 +20,8 @@ python3 -m http.server 4191 --bind 127.0.0.1 --directory dist
 4. 用三轮问题补充自己的经历、回应和适用条件。
 5. 检查原话后生成观点卡，在“我的作品”继续修改或下载 Markdown。
 
+每一轮都提供一条与当前话题、当前问题对应的“演示预设回答”。输入框为空时可一键填入；已有内容时会先确认，避免误覆盖。填入后仍可修改，未修改的预设文字会在观点卡和 Markdown 中明确标记为“演示预设”。
+
 ## 数据边界
 
 - 12 条内容于 2026-09-13 通过知乎官方 CLI 调用开放平台获取。
@@ -37,4 +39,3 @@ python3 -m http.server 4191 --bind 127.0.0.1 --directory dist
 node --check dist/app.js
 node --test tests/data.test.cjs
 ```
-

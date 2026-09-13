@@ -101,9 +101,18 @@
               <div class="assistant"><span>知</span><div><b>知树</b><small id="round-name"></small></div><em>顺着你的回答继续问</em></div>
               <h2 id="prompt-title"></h2>
               <p id="prompt-help"></p>
+              <div class="preset-line">
+                <span>快速演示</span>
+                <button type="button" data-action="fill-demo" aria-label="一键填入本轮演示回答">
+                  <b>一键填入预设回答</b>
+                  <small id="preset-preview"></small>
+                  <em>↘</em>
+                </button>
+                <p>仅用于展示，填入后仍可修改。</p>
+              </div>
               <label class="sr-only" for="answer">你的回答</label>
               <textarea id="answer" maxlength="3000" rows="7" placeholder="用自己的话说说。没有结论，也可以把犹豫写下来。"></textarea>
-              <div class="answer-meta"><span>你的原话会被保留，不会被改写成别人的观点。</span><span id="answer-count">0 / 3000</span></div>
+              <div class="answer-meta"><span id="answer-origin-note">你的原话会被保留，不会被改写成别人的观点。</span><span id="answer-count">0 / 3000</span></div>
               <p id="answer-error" class="error" role="alert"></p>
               <div class="answer-actions"><button class="quiet-button" data-action="skip">先保留空缺</button><button class="primary-button" data-action="next">说好了，继续 →</button></div>
             </section>

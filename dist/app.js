@@ -37,6 +37,13 @@
     return DATA.topics.find((topic) => topic.id === id) || DATA.topics[0];
   }
 
+  function presetFlags(record) {
+    if (!Array.isArray(record.presetUsed) || record.presetUsed.length !== 3) {
+      record.presetUsed = [false, false, false];
+    }
+    return record.presetUsed;
+  }
+
   function showDialog(title, html) {
     $('#dialog-title').textContent = title;
     $('#dialog-body').innerHTML = html;
@@ -101,7 +108,7 @@
   }
 
   function freshSession(topic) {
-    return { topicId: topic.id, round: 0, reached: 0, answers: ['', '', ''], updatedAt: new Date().toISOString() };
+    return { topicId: topic.id, round: 0, reached: 0, answers: ['', '', ''], presetUsed: [false, false, false], updatedAt: new Date().toISOString() };
   }
 
   function startThinking(topic) {
@@ -123,6 +130,7 @@
     $('#thinking-empty').hidden = !!session;
     $('#thinking-workspace').hidden = !session;
     if (!session) return;
+    presetFlags(session);
     const topic = topicById(session.topicId);
     currentTopic = topic;
     $('#thinking-back').href = `#topic/${topic.id}`;
@@ -136,7 +144,7 @@
     $('#question-card').hidden = review;
     $('#review-card').hidden = !review;
     if (review) {
-      $('#answer-review').innerHTML = answerLabels.map((label, index) => `<div class="review-block"><h3>${esc(label)}<button data-action="edit-round" data-round="${index}">修改</button></h3><p>${esc(session.answers[index].trim() || '（尚未展开，先保留为空缺。）')}</p></div>`).join('');
+      $('#answer-review').innerHTML = answerLabels.map((label, index) => `<div class="review-block"><h3><span>${esc(label)}${session.presetUsed[index] ? '<em class="preset-badge">演示预设</em>' : ''}</span><button data-action="edit-round" data-round="${index}">修改</button></h3><p>${esc(session.answers[index].trim() || '（尚未展开，先保留为空缺。）')}</p></div>`).join('');
     } else {
       $('#round-name').textContent = ['第一轮 · 你的真实经历', '第二轮 · 回应另一种可能', '第三轮 · 说清适用边界'][session.round];
       $('#prompt-title').textContent = topic.prompts[session.round];
@@ -147,6 +155,9 @@
       ][session.round];
       $('#answer').value = session.answers[session.round];
       $('#answer-count').textContent = `${session.answers[session.round].length} / 3000`;
+      $('#preset-preview').textContent = `“${topic.presetAnswers[session.round].slice(0, 34)}…”`;
+      $('[data-action="fill-demo"] b').textContent = session.answers[session.round].trim() ? '换成预设回答' : '一键填入预设回答';
+      $('#answer-origin-note').textContent = session.presetUsed[session.round] ? '当前是演示预设；修改任意内容后，会作为你的表达保留。' : '你的原话会被保留，不会被改写成别人的观点。';
       $('#answer-error').textContent = '';
     }
     renderSummary();
@@ -179,6 +190,38 @@
     renderThinking();
   }
 
+  function applyPresetAnswer(expectedRound) {
+    const session = state.session;
+    if (!session || session.round !== expectedRound || session.round >= 3) return;
+    const topic = topicById(session.topicId);
+    const preset = topic.presetAnswers[session.round];
+    session.answers[session.round] = preset;
+    presetFlags(session)[session.round] = true;
+    session.updatedAt = new Date().toISOString();
+    $('#answer').value = preset;
+    $('#answer-count').textContent = `${preset.length} / 3000`;
+    $('#answer-origin-note').textContent = '当前是演示预设；修改任意内容后，会作为你的表达保留。';
+    $('[data-action="fill-demo"] b').textContent = '换成预设回答';
+    $('#answer-error').textContent = '';
+    renderSummary();
+    save();
+    $('#answer').focus();
+    toast('已填入演示回答，可以继续修改或直接进入下一轮。');
+  }
+
+  function fillDemoAnswer() {
+    const session = state.session;
+    if (!session || session.round >= 3) return;
+    const round = session.round;
+    const current = $('#answer').value.trim();
+    const preset = topicById(session.topicId).presetAnswers[round];
+    if (current && current !== preset) {
+      showDialog('换成演示预设回答？', `<p>输入框里已经有你写的内容。继续后，这一轮会被演示文字替换。</p><div class="dialog-note">${esc(preset)}</div><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">保留我的内容</button><button class="primary-button" data-action="confirm-fill" data-round="${round}">换成演示回答</button></div>`);
+      return;
+    }
+    applyPresetAnswer(round);
+  }
+
   function createWork() {
     const session = state.session;
     if (!session) return;
@@ -193,12 +236,14 @@
       topicId: topic.id,
       title: topic.title,
       answers: [...session.answers],
+      presetUsed: [...presetFlags(session)],
       sourceIds: topic.sources.map((source) => source.id),
       updatedAt: new Date().toISOString()
     };
     if (existing) Object.assign(existing, work); else state.works.unshift(work);
     save();
-    showDialog('一张属于你的观点卡，长出来了。', `<img src="assets/tree-full.png" alt="枝叶舒展的知树" style="display:block;width:220px;height:190px;object-fit:contain;margin:0 auto"><p style="text-align:center">它保留了你的三轮原话和当时参考的知乎来源。<br>不会自动发布，也不会替你补写没有说过的内容。</p><div class="dialog-actions"><button class="quiet-button" data-action="download-current">下载 Markdown</button><button class="primary-button" data-action="go-works">看看我的作品 →</button></div>`);
+    const presetNote = presetFlags(session).some(Boolean) ? '<br>其中标有“演示预设”的段落只用于展示，不代表你的真实经历。' : '';
+    showDialog('一张属于你的观点卡，长出来了。', `<img src="assets/tree-full.png" alt="枝叶舒展的知树" style="display:block;width:220px;height:190px;object-fit:contain;margin:0 auto"><p style="text-align:center">它保留了你的三轮表达和当时参考的知乎来源。<br>不会自动发布，也不会替你补写没有说过的内容。${presetNote}</p><div class="dialog-actions"><button class="quiet-button" data-action="download-current">下载 Markdown</button><button class="primary-button" data-action="go-works">看看我的作品 →</button></div>`);
   }
 
   function renderWorks() {
@@ -209,7 +254,7 @@
     $('#work-list').innerHTML = state.works.map((work) => {
       const topic = topicById(work.topicId);
       return `<article class="work-card">
-        <div class="work-card-top"><span>观点卡 · ${esc(topic.short)}</span><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div>
+        <div class="work-card-top"><span class="${presetFlags(work).some(Boolean) ? 'demo-work' : ''}">观点卡 · ${presetFlags(work).some(Boolean) ? '含演示预设' : esc(topic.short)}</span><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div>
         <h2>${esc(work.title)}</h2>
         ${answerLabels.map((label, index) => `<div class="work-answer"><b>${esc(label)}</b><p>${esc(work.answers[index].trim() || '尚未展开')}</p></div>`).join('')}
         <div class="work-sources">保留 ${topic.sources.length} 条知乎来源</div>
@@ -220,9 +265,10 @@
 
   function markdown(work) {
     const topic = topicById(work.topicId);
-    const answers = answerLabels.map((label, index) => `## ${label}\n\n${work.answers[index].trim() || '（尚未展开）'}`).join('\n\n');
+    const flags = presetFlags(work);
+    const answers = answerLabels.map((label, index) => `## ${label}${flags[index] ? '（演示预设）' : ''}\n\n${work.answers[index].trim() || '（尚未展开）'}`).join('\n\n');
     const sources = topic.sources.map((source, index) => `### [${index + 1}] ${source.title}\n\n- 作者：${source.author}\n- 类型：${source.type}\n- 知树整理：${source.summary}\n- 原文：${source.url}`).join('\n\n');
-    return `# ${work.title}\n\n> 由“知树 · 知乎真实内容话题 DEMO”保存。以下观点是用户原话；材料说明基于 2026-09-13 获取的知乎公开内容摘要，不代表知乎或原作者结论，请回原文核对。\n\n${answers}\n\n## 这次参考的知乎内容\n\n${sources}\n`;
+    return `# ${work.title}\n\n> 由“知树 · 知乎真实内容话题 DEMO”保存。未标记“演示预设”的段落为用户输入；演示预设仅用于展示，不代表用户真实经历。材料说明基于 2026-09-13 获取的知乎公开内容摘要，不代表知乎或原作者结论，请回原文核对。\n\n${answers}\n\n## 这次参考的知乎内容\n\n${sources}\n`;
   }
 
   function downloadWork(work) {
@@ -285,6 +331,12 @@
       toast(index >= 0 ? '已取消收藏这个话题。' : '话题已收藏在当前浏览器。');
     },
     'show-evidence': () => { $('#thinking-evidence').hidden = !$('#thinking-evidence').hidden; },
+    'fill-demo': fillDemoAnswer,
+    'confirm-fill': (button) => {
+      const round = Number(button.dataset.round);
+      closeDialog();
+      applyPresetAnswer(round);
+    },
     next: () => nextRound(false),
     skip: () => nextRound(true),
     'edit-round': (button) => {
@@ -310,6 +362,7 @@
         round: 3,
         reached: 3,
         answers: [...work.answers],
+        presetUsed: [...presetFlags(work)],
         updatedAt: new Date().toISOString()
       };
       save();
@@ -338,8 +391,12 @@
   $('#answer').addEventListener('input', () => {
     if (!state.session || state.session.round >= 3) return;
     state.session.answers[state.session.round] = $('#answer').value;
+    const topic = topicById(state.session.topicId);
+    presetFlags(state.session)[state.session.round] = $('#answer').value === topic.presetAnswers[state.session.round];
     state.session.updatedAt = new Date().toISOString();
     $('#answer-count').textContent = `${$('#answer').value.length} / 3000`;
+    $('#answer-origin-note').textContent = presetFlags(state.session)[state.session.round] ? '当前是演示预设；修改任意内容后，会作为你的表达保留。' : '你的原话会被保留，不会被改写成别人的观点。';
+    $('[data-action="fill-demo"] b').textContent = $('#answer').value.trim() ? '换成预设回答' : '一键填入预设回答';
     $('#answer-error').textContent = '';
     renderSummary();
     save();

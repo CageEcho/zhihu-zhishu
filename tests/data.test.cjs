@@ -16,6 +16,8 @@ test('每个话题包含 3 条真实来源和 3 个思考问题', () => {
   for (const topic of data.topics) {
     assert.equal(topic.sources.length, 3, topic.id);
     assert.equal(topic.prompts.length, 3, topic.id);
+    assert.equal(topic.presetAnswers.length, 3, topic.id);
+    assert.ok(topic.presetAnswers.every((answer) => answer.length >= 70), topic.id);
     assert.equal(topic.sides.length, 2, topic.id);
   }
 });
@@ -40,4 +42,3 @@ test('每个话题都明确写出分歧与用户可补充内容', () => {
     assert.ok(topic.reason.length >= 30);
   }
 });
-
