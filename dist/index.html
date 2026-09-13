@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="知树真实知乎内容话题卡 DEMO：从公开内容中发现大学生值得写的问题。">
+  <title>知树 · 从真实收藏里发现值得写的问题</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230667ff'/%3E%3Ctext x='9' y='47' font-size='43' fill='white'%3E知%3C/text%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="assets/tree-full.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+  <header class="header">
+    <a class="brand" href="#home" aria-label="知树首页">知树<span></span></a>
+    <span class="tagline">让收藏，长成自己的观点。</span>
+    <nav aria-label="主导航">
+      <a href="#home" data-route="home">首页</a>
+      <a href="#favorites" data-route="favorites">示例收藏 <b>12</b></a>
+      <a href="#thinking" data-route="thinking">一起想清楚</a>
+      <a href="#works" data-route="works">我的作品</a>
+    </nav>
+    <button class="info-button" data-action="about"><span class="source-pulse"></span>知乎真实数据 <b>↗</b></button>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="view-home" class="view home-view">
+      <div class="home-intro">
+        <div class="intro-copy">
+          <div class="eyebrow"><span></span> 从 12 条知乎公开内容中发现</div>
+          <h1>这些收藏放在一起，<br>能写出什么？</h1>
+          <p>不先替你写答案。先把大家在争什么摆出来，<br>再找一个你真的有话可说的问题。</p>
+        </div>
+        <div class="mini-tree" aria-label="知识树装饰图">
+          <span>12 条来源</span>
+          <img src="assets/tree-full.png" alt="枝叶茂盛的知树">
+          <div><b>4</b><small>个值得写的话题</small></div>
+        </div>
+      </div>
+      <div class="home-meta">
+        <div><span class="source-pulse"></span><strong>公开内容已整理</strong><span>来源可回查 · 摘要不等于完整原文</span></div>
+        <button data-action="how">知树怎么找到这些问题？ ↗</button>
+      </div>
+      <div id="topic-grid" class="topic-grid" aria-label="推荐写作话题"></div>
+      <div class="disclosure">
+        <span>数据说明</span>
+        <p>以下内容于 2026-09-13 通过知乎开放平台获取并固化在本 DEMO 中。观点对照是知树基于公开内容摘要的整理，不代表知乎或原作者结论；请点击原文核对上下文。</p>
+      </div>
+    </section>
+
+    <section id="view-topic" class="view page-view" hidden>
+      <div class="back-row"><a href="#home">← 返回全部话题</a><span id="topic-source-count"></span></div>
+      <div class="topic-layout">
+        <article class="topic-detail">
+          <div class="topic-kicker"><span id="topic-order"></span><b id="topic-recommended"></b></div>
+          <h1 id="topic-title"></h1>
+          <div id="topic-tags" class="tags"></div>
+          <p id="topic-reason" class="topic-lead"></p>
+          <section class="debate-section">
+            <div class="section-label">大家在争什么</div>
+            <h2 id="topic-debate"></h2>
+            <div id="side-grid" class="side-grid"></div>
+          </section>
+          <section class="source-section">
+            <div class="section-head"><div><div class="section-label">这次用到的知乎内容</div><h2>回到来源，看看原作者怎么说。</h2></div><span>公开摘要整理</span></div>
+            <div id="source-list" class="source-list"></div>
+          </section>
+        </article>
+        <aside class="start-panel">
+          <div class="sapling"><img src="assets/tree-bare.png" alt="等待生长的知树"><span>你的经历<br>是材料里没有的部分</span></div>
+          <div class="section-label">你可以补什么</div>
+          <p id="topic-contribution"></p>
+          <button class="primary-button" data-action="start-thinking">用这个话题开始思考 <span>→</span></button>
+          <button class="quiet-button" data-action="save-topic">收藏这个话题</button>
+          <small>三轮表达约 3 分钟，只保存在当前浏览器。</small>
+        </aside>
+      </div>
+    </section>
+
+    <section id="view-favorites" class="view page-view" hidden>
+      <div class="page-heading"><div><div class="eyebrow">演示收藏 · 来自知乎公开内容</div><h1>先看真实材料，再决定写什么。</h1><p>这不是你的私人收藏夹。12 条公开内容按 4 个话题预先整理，点击即可回到知乎原文。</p></div><img src="assets/tree-bare.png" alt="资料像根系一样托起知识树"></div>
+      <div id="favorite-groups" class="favorite-groups"></div>
+    </section>
+
+    <section id="view-thinking" class="view page-view" hidden>
+      <div id="thinking-empty" class="empty" hidden>
+        <img src="assets/tree-bare.png" alt="等待开始思考的树">
+        <h1>先选一个你真的想写的问题。</h1>
+        <p>4 个话题都来自真实知乎公开内容，先看看分歧，再挑一个开始。</p>
+        <a href="#home" class="primary-button">去选话题 →</a>
+      </div>
+      <div id="thinking-workspace">
+        <div class="thinking-top"><a id="thinking-back" href="#home">← 返回话题</a><div class="steps" aria-label="思考进度"><span>1 你的经历</span><i></i><span>2 回应异见</span><i></i><span>3 说明边界</span><i></i><span>4 检查观点</span></div></div>
+        <div class="thinking-layout">
+          <article class="thinking-main">
+            <div class="question-overview"><div class="section-label">这次想清楚的问题</div><h1 id="thinking-title"></h1><button data-action="show-evidence">先回看材料里的两种说法 <span>⌄</span></button><div id="thinking-evidence" class="thinking-evidence" hidden></div></div>
+            <section id="question-card" class="question-card">
+              <div class="assistant"><span>知</span><div><b>知树</b><small id="round-name"></small></div><em>顺着你的回答继续问</em></div>
+              <h2 id="prompt-title"></h2>
+              <p id="prompt-help"></p>
+              <label class="sr-only" for="answer">你的回答</label>
+              <textarea id="answer" maxlength="3000" rows="7" placeholder="用自己的话说说。没有结论，也可以把犹豫写下来。"></textarea>
+              <div class="answer-meta"><span>你的原话会被保留，不会被改写成别人的观点。</span><span id="answer-count">0 / 3000</span></div>
+              <p id="answer-error" class="error" role="alert"></p>
+              <div class="answer-actions"><button class="quiet-button" data-action="skip">先保留空缺</button><button class="primary-button" data-action="next">说好了，继续 →</button></div>
+            </section>
+            <section id="review-card" class="review-card" hidden>
+              <div class="eyebrow"><span></span> 先检查意思，再整理成文</div>
+              <h2>这是你真正想说的吗？</h2>
+              <p>下面只归拢你的原话，没有替你补写立场。空缺会继续保留。</p>
+              <div id="answer-review"></div>
+              <div class="answer-actions"><button class="quiet-button" data-action="restart-rounds">返回修改</button><button class="primary-button" data-action="create-work">保存为观点卡 →</button></div>
+            </section>
+          </article>
+          <aside class="growth-panel">
+            <div class="growth-image"><img id="growth-tree" src="assets/tree-bare.png" alt="随思考生长的知树"><span id="growth-stage">资料已经成为根系</span></div>
+            <h2>你目前的想法</h2>
+            <div id="answer-summary"></div>
+            <small>仅保存在当前浏览器 · 不会自动发布</small>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-works" class="view page-view" hidden>
+      <div class="page-heading works-heading"><div><div class="eyebrow">你的表达</div><h1>让一条收藏，长成自己的观点。</h1><p>这里保留你亲自说过的话，以及当时参考的知乎来源。</p></div><img src="assets/tree-full.png" alt="已经长成的知树"></div>
+      <div id="work-list" class="work-list"></div>
+    </section>
+  </main>
+
+  <footer><span>知树 · 知乎真实内容话题 DEMO</span><span>公开摘要整理，不代表平台或作者结论 · <button data-action="about">体验说明 ↗</button></span></footer>
+  <dialog id="dialog" aria-labelledby="dialog-title"><div class="dialog-head"><span class="eyebrow">知树</span><button data-action="close-dialog" aria-label="关闭">×</button></div><h2 id="dialog-title"></h2><div id="dialog-body"></div></dialog>
+  <div id="toast" class="toast" hidden role="status"></div>
+</body>
+</html>
