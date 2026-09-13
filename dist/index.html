@@ -18,37 +18,37 @@
     <a class="brand" href="#home" aria-label="知树首页">知树<span></span></a>
     <span class="tagline">让收藏，长成自己的观点。</span>
     <nav aria-label="主导航">
-      <a href="#home" data-route="home">首页</a>
-      <a href="#favorites" data-route="favorites">我的根系 <b id="root-source-count">12</b></a>
+      <a href="#favorites" data-route="favorites">我的资料 <b id="root-source-count">12</b></a>
       <a href="#thinking" data-route="thinking">一起想清楚</a>
-      <a href="#forest" data-route="forest">同题森林 <b id="forest-nav-count">3</b></a>
       <a href="#works" data-route="works">我的作品</a>
     </nav>
-    <button class="info-button" data-action="about"><span class="source-pulse"></span>知乎真实数据 <b>↗</b></button>
+    <div class="header-actions"><button class="info-button" data-action="about">使用说明</button><button class="user-button" data-action="profile" aria-label="查看演示账户"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg></button></div>
   </header>
 
   <main id="main" tabindex="-1">
     <section id="view-home" class="view home-view">
-      <div class="home-intro">
-        <div class="intro-copy">
-          <div class="eyebrow"><span></span> 从 12 条知乎公开内容中发现</div>
-          <h1>这些收藏放在一起，<br>能写出什么？</h1>
-          <p>不先替你写答案。先把大家在争什么摆出来，<br>再找一个你真的有话可说的问题。</p>
+      <div class="home-hero">
+        <div class="hero-copy">
+          <div class="eyebrow">从收藏到自己的文章</div>
+          <h1>收藏里有很多好东西，<br>今天把一个问题<br>想清楚。</h1>
+          <p>从资料里找问题，用几轮追问说清想法，<br>再整理成带出处的文章。</p>
+          <div class="hero-actions"><button class="primary-button" data-action="add-favorite"><span>＋</span>添加我的收藏内容</button><a class="quiet-button" href="#topic/ai-learning">体验演示资料</a></div>
+          <div class="hero-hints"><span>粘贴内容与来源链接，即可开始</span><span>▣ 作品默认私人保存，发布由你决定</span></div>
         </div>
-        <div class="mini-tree" aria-label="知识树装饰图">
-          <span>12 条来源</span>
-          <img src="assets/tree-full.png" alt="枝叶茂盛的知树">
-          <div><b>4</b><small>个值得写的话题</small></div>
+        <div class="hero-tree" aria-label="知识树成长含义示意">
+          <div class="tree-scene-title"><span class="source-pulse"></span>思考生长示例 <small>点击圆点查看含义</small></div>
+          <img src="assets/tree-fruit.png" alt="根系、树干、枝叶完整并结出金色果实的知识树">
+          <button class="tree-hotspot root-hotspot" data-action="tree-note" data-note="root" aria-pressed="false"><i></i><b>根系<em>收藏内容</em></b></button>
+          <button class="tree-hotspot trunk-hotspot" data-action="tree-note" data-note="trunk" aria-pressed="false"><i></i><b>树干<em>主要观点</em></b></button>
+          <button class="tree-hotspot leaf-hotspot" data-action="tree-note" data-note="leaf" aria-pressed="false"><i></i><b>枝叶<em>多轮对话</em></b></button>
+          <button class="tree-hotspot fruit-hotspot" data-action="tree-note" data-note="fruit" aria-pressed="false"><i></i><b>果实<em>写出的文章</em></b></button>
+          <div id="tree-note" class="tree-note" hidden><strong id="tree-note-title"></strong><p id="tree-note-copy"></p></div>
         </div>
       </div>
-      <div class="home-meta">
-        <div><span class="source-pulse"></span><strong>公开内容已整理</strong><span>来源可回查 · 摘要不等于完整原文</span></div>
-        <button data-action="how">知树怎么找到这些问题？ ↗</button>
-      </div>
-      <div id="topic-grid" class="topic-grid" aria-label="推荐写作话题"></div>
-      <div class="disclosure">
-        <span>数据说明</span>
-        <p>以下内容于 2026-09-13 通过知乎开放平台获取并固化在本 DEMO 中。观点对照是知树基于公开内容摘要的整理，不代表知乎或原作者结论；请点击原文核对上下文。</p>
+      <div class="home-flow" aria-label="知树创作流程">
+        <a href="#favorites"><span class="flow-number">01</span><div><b>选一个问题</b><p>看看资料里的不同说法</p></div><em>↗</em></a>
+        <button data-action="go-thinking"><span class="flow-number">02</span><div><b>说清自己的想法</b><p>聊聊理由、异见和适用条件</p></div><em>↗</em></button>
+        <a href="#works"><span class="flow-number">03</span><div><b>检查后整理成文</b><p>先核对观点，再确认文章结果</p></div><em>↗</em></a>
       </div>
     </section>
 
@@ -87,6 +87,7 @@
         <div class="adopted-root-head"><div><div class="section-label">从同题森林采集</div><h2>知友的果实，成为你的新根系。</h2></div><span>采集不代表认同</span></div>
         <div id="adopted-root-list" class="adopted-root-list"></div>
       </section>
+      <section id="personal-source-section" class="personal-source-section" hidden><div class="adopted-root-head"><div><div class="section-label">我添加的收藏内容</div><h2>你亲自放进来的资料。</h2></div><button class="quiet-button" data-action="add-favorite">继续添加</button></div><div id="personal-source-list" class="adopted-root-list"></div></section>
       <div id="favorite-groups" class="favorite-groups"></div>
     </section>
 
@@ -191,7 +192,7 @@
     </section>
 
     <section id="view-works" class="view page-view" hidden>
-      <div class="page-heading works-heading"><div><div class="eyebrow">你的知识果实</div><h1>确认过的文章，才会在树上结果。</h1><p>文章结果后仍先私人保存。只有你再次确认，果实才会进入同题森林。</p></div><img src="assets/tree-fruit.png" alt="结出金色果实的知树"></div>
+      <div class="page-heading works-heading"><div><div class="eyebrow">你的知识果实</div><h1>确认过的文章，才会在树上结果。</h1><p>文章结果后仍先私人保存。只有你再次确认，果实才会进入同题森林。</p></div><div class="works-heading-actions"><a class="quiet-button" href="#forest">进入同题森林 →</a><img src="assets/tree-fruit.png" alt="结出金色果实的知树"></div></div>
       <div id="work-list" class="work-list"></div>
     </section>
   </main>

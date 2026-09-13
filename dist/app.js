@@ -11,7 +11,7 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
 
-  let state = { savedTopics: [], session: null, works: [], draftArticle: null, adoptedRoots: [], publishedWorkIds: [], socialActions: [], forestTopicId: 'ai-learning' };
+  let state = { savedTopics: [], session: null, works: [], draftArticle: null, userSources: [], adoptedRoots: [], publishedWorkIds: [], socialActions: [], forestTopicId: 'ai-learning' };
   let currentTopic = DATA.topics[0];
   let currentView = '';
   let toastTimer;
@@ -26,6 +26,7 @@
     // The demo still works in memory when browser storage is unavailable.
   }
   state.adoptedRoots = Array.isArray(state.adoptedRoots) ? state.adoptedRoots : [];
+  state.userSources = Array.isArray(state.userSources) ? state.userSources : [];
   state.publishedWorkIds = Array.isArray(state.publishedWorkIds) ? state.publishedWorkIds : [];
   state.socialActions = Array.isArray(state.socialActions) ? state.socialActions : [];
   state.forestTopicId = topicById(state.forestTopicId || state.session?.topicId).id;
@@ -71,23 +72,13 @@
   }
 
   function syncNavCounts() {
-    $('#root-source-count').textContent = 12 + state.adoptedRoots.length;
+    $('#root-source-count').textContent = 12 + state.userSources.length + state.adoptedRoots.length;
     const ownPublished = state.works.filter((work) => state.publishedWorkIds.includes(work.id) && work.topicId === state.forestTopicId).length;
-    $('#forest-nav-count').textContent = 3 + ownPublished;
+    if ($('#forest-nav-count')) $('#forest-nav-count').textContent = 3 + ownPublished;
   }
 
   function renderHome() {
-    $('#topic-grid').innerHTML = DATA.topics.map((topic, index) => {
-      const cardClass = topic.id === 'ai-learning' ? 'primary' : topic.id === 'collections' ? 'origin' : '';
-      const sizeClass = topic.featured ? 'featured' : 'compact';
-      return `<a class="topic-card ${sizeClass} ${cardClass}" href="#topic/${esc(topic.id)}">
-        <div class="topic-top"><span class="topic-number">${esc(topic.order)}</span><span class="topic-badge">${esc(topic.recommended)}</span></div>
-        <h2>${esc(topic.title)}</h2>
-        <p class="topic-reason">${esc(topic.reason)}</p>
-        <div class="tags">${topic.tags.map((tag) => `<span>${esc(tag)}</span>`).join('')}</div>
-        <div class="topic-bottom"><span>基于 ${topic.sources.length} 条知乎公开内容</span><b>${index < 2 ? '查看观点分歧' : '看看值不值得写'} →</b></div>
-      </a>`;
-    }).join('');
+    syncNavCounts();
   }
 
   function renderTopic(topic) {
@@ -111,6 +102,12 @@
   }
 
   function renderFavorites() {
+    $('#personal-source-section').hidden = !state.userSources.length;
+    $('#personal-source-list').innerHTML = state.userSources.map((source) => `<article class="adopted-root-card personal-source-card">
+      <span class="root-mark">藏</span>
+      <div><div class="source-meta">我添加的收藏 · ${new Date(source.createdAt).toLocaleDateString('zh-CN')}</div><h3>${esc(source.title)}</h3><p>${esc(source.content)}</p>${safeUrl(source.url) ? `<a class="personal-source-link" href="${esc(safeUrl(source.url))}" target="_blank" rel="noopener noreferrer">打开来源 ↗</a>` : ''}</div>
+      <div><button data-action="remove-user-source" data-id="${esc(source.id)}">移除收藏</button></div>
+    </article>`).join('');
     $('#adopted-root-section').hidden = !state.adoptedRoots.length;
     $('#adopted-root-list').innerHTML = state.adoptedRoots.map((root) => `<article class="adopted-root-card">
       <span class="root-mark">根</span>
@@ -127,6 +124,27 @@
       </article>`).join('')}</div>
     </section>`).join('');
   }
+
+  function safeUrl(value) {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function openAddFavorite() {
+    showDialog('添加我的收藏内容', `<p>粘贴一段你想继续思考的内容，并记录它来自哪里。当前 DEMO 只保存在这台设备的浏览器中。</p><form id="favorite-form" class="favorite-form"><label for="favorite-title">收藏标题</label><input id="favorite-title" maxlength="140" placeholder="这条内容在讲什么？" required><label for="favorite-content">内容或摘要</label><textarea id="favorite-content" rows="5" maxlength="10000" placeholder="粘贴原文片段，或用自己的话记下重点……" required></textarea><label for="favorite-url">来源链接 <span>选填</span></label><input id="favorite-url" type="url" maxlength="2000" placeholder="https://"><div class="favorite-form-help"><button type="button" data-action="fill-favorite-demo">填入一条演示收藏</button><small>链接仅作出处记录，不会自动抓取内容。</small></div><p id="favorite-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" class="quiet-button" data-action="close-dialog">取消</button><button type="submit" class="primary-button">添加到我的资料 →</button></div></form>`);
+  }
+
+  const treeNotes = {
+    root: ['根系 · 收藏内容', '收藏、导入资料和从同题森林采集的果实都在这里保留来源。它们是思考材料，还不是你的观点。'],
+    trunk: ['树干 · 主要观点', '完成第一轮表达后，你亲自说出的判断和理由长成树干，决定整篇文章站在哪里。'],
+    leaf: ['枝叶 · 多轮对话', '回应异见、补充例子并说明适用边界，思考才会从一句判断展开成枝叶。'],
+    fruit: ['果实 · 写出的文章', '三轮表达先整理成草稿；只有你检查并确认文章，树上才会出现果实。发布仍是另一个动作。']
+  };
 
   function freshSession(topic) {
     return { topicId: topic.id, round: 0, reached: 0, answers: ['', '', ''], presetUsed: [false, false, false], updatedAt: new Date().toISOString() };
@@ -506,11 +524,13 @@
     if (!['home', 'topic', 'favorites', 'thinking', 'article', 'forest', 'works'].includes(view)) view = 'home';
     if (view === 'article' && !state.draftArticle) view = state.session ? 'thinking' : 'works';
     $$('.view').forEach((section) => { section.hidden = section.id !== `view-${view}`; });
+    document.body.dataset.view = view;
     $$('[data-route]').forEach((link) => {
-      const active = link.dataset.route === view || (view === 'topic' && link.dataset.route === 'home') || (view === 'article' && link.dataset.route === 'works');
+      const active = link.dataset.route === view || (view === 'article' && link.dataset.route === 'works') || (view === 'forest' && link.dataset.route === 'works');
       link.classList.toggle('active', active);
       if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
     });
+    if (view === 'home') renderHome();
     if (view === 'topic') renderTopic(currentTopic);
     if (view === 'favorites') renderFavorites();
     if (view === 'thinking') renderThinking();
@@ -531,6 +551,30 @@
     about: () => showDialog('这版 DEMO，真实在哪里？', `<p>4 个话题不是凭空编出来的。我们通过知乎开放平台检索公开回答和文章，再从材料中找出分歧，整理成首页话题卡。</p><ul><li>共使用 12 条知乎公开内容，每条都保留原文链接。</li><li>页面只展示摘要后的观点，不把搜索摘要冒充完整原文。</li><li>“大家在争什么”是知树的整理，不代表知乎或原作者的统一结论。</li><li>三轮表达先整理成可编辑文章；用户确认文章后，树上才会结出果实。</li><li>文章结果后仍是私人保存，只有再次确认才进入同题森林。</li><li>同题森林、知友、异见回复和采集均为当前浏览器里的演示，不会联系或发布给真实用户。</li><li>采集果实会保留作者和来源链，但不代表认同，也不会直接变成用户观点。</li><li>这仍是静态演示：数据获取于 ${DATA.fetchedAt}，页面打开时不会再次请求知乎。</li></ul><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
     how: () => showDialog('知树怎么找到一个值得写的问题？', `<p>它先不问“哪篇最正确”，而是做三件事：</p><ul><li>把讨论同一件事的收藏放在一起。</li><li>找出结论、理由或适用条件上的不同。</li><li>检查材料里缺少什么个人经验，再把它变成一个能回答的具体问题。</li></ul><div class="dialog-note">比如实习话题里，分歧不是简单的“去或不去”，而是实习应该多早开始、要不要追求数量，以及专业学习和校园体验值不值得被挤压。</div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">继续看话题</button></div>`),
     'close-dialog': closeDialog,
+    'add-favorite': openAddFavorite,
+    'fill-favorite-demo': () => {
+      if (!$('#favorite-title')) return;
+      $('#favorite-title').value = 'AI 给出答案以后，怎样判断自己真的学会了？';
+      $('#favorite-content').value = '一个可操作的检查方法是：看完 AI 的解释后先关掉答案，再独立完成一道相似题，并用自己的话说明关键步骤。能够复述不一定等于能够迁移。';
+      $('#favorite-url').value = 'https://www.zhihu.com/question/625883000';
+      $('#favorite-error').textContent = '';
+      $('#favorite-title').focus();
+    },
+    'tree-note': (button) => {
+      const wasActive = button.getAttribute('aria-pressed') === 'true';
+      $$('.tree-hotspot').forEach((item) => item.setAttribute('aria-pressed', 'false'));
+      if (wasActive) {
+        $('#tree-note').hidden = true;
+        return;
+      }
+      const [title, copy] = treeNotes[button.dataset.note];
+      button.setAttribute('aria-pressed', 'true');
+      $('#tree-note-title').textContent = title;
+      $('#tree-note-copy').textContent = copy;
+      $('#tree-note').hidden = false;
+    },
+    profile: () => showDialog('演示账户', `<p>这是一套本机 DEMO 数据，不代表真实知乎账号状态。</p><div class="profile-stats"><div><b>${12 + state.userSources.length + state.adoptedRoots.length}</b><span>条根系</span></div><div><b>${state.works.length}</b><span>篇作品</span></div><div><b>${state.publishedWorkIds.length}</b><span>颗公开果实</span></div></div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    'go-thinking': () => state.session ? (location.hash = 'thinking') : startThinking(DATA.topics[0]),
     'start-thinking': () => startThinking(currentTopic),
     'confirm-new': (button) => {
       state.session = freshSession(topicById(button.dataset.topic));
@@ -636,6 +680,19 @@
       syncNavCounts();
       toast('这条采集根系已移除。');
     },
+    'remove-user-source': (button) => {
+      const source = state.userSources.find((item) => item.id === button.dataset.id);
+      if (!source) return;
+      showDialog('移除这条收藏内容？', `<p>“${esc(source.title)}”将从你的资料中移除。已确认的文章不会因此被自动改写。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">取消</button><button class="primary-button" data-action="confirm-remove-user-source" data-id="${esc(source.id)}">确认移除</button></div>`);
+    },
+    'confirm-remove-user-source': (button) => {
+      state.userSources = state.userSources.filter((source) => source.id !== button.dataset.id);
+      save();
+      closeDialog();
+      renderFavorites();
+      syncNavCounts();
+      toast('收藏内容已移除。');
+    },
     'publish-work': (button) => {
       const work = state.works.find((item) => item.id === button.dataset.id);
       openPublishConfirmation(work);
@@ -714,6 +771,29 @@
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]');
     if (button) actions[button.dataset.action]?.(button);
+  });
+
+  document.addEventListener('submit', (event) => {
+    if (event.target.id !== 'favorite-form') return;
+    event.preventDefault();
+    const title = $('#favorite-title').value.trim();
+    const content = $('#favorite-content').value.trim();
+    const rawUrl = $('#favorite-url').value.trim();
+    const url = safeUrl(rawUrl);
+    if (!title || !content) {
+      $('#favorite-error').textContent = '请填写收藏标题和内容。';
+      return;
+    }
+    if (rawUrl && !url) {
+      $('#favorite-error').textContent = '请填写以 http 或 https 开头的来源链接。';
+      return;
+    }
+    state.userSources.unshift({ id: `source-${Date.now()}`, title, content, url, createdAt: new Date().toISOString() });
+    save();
+    closeDialog();
+    syncNavCounts();
+    location.hash = 'favorites';
+    toast('收藏内容已加入根系。');
   });
 
   document.addEventListener('input', (event) => {
