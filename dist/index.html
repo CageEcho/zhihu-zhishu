@@ -19,8 +19,9 @@
     <span class="tagline">让收藏，长成自己的观点。</span>
     <nav aria-label="主导航">
       <a href="#home" data-route="home">首页</a>
-      <a href="#favorites" data-route="favorites">示例收藏 <b>12</b></a>
+      <a href="#favorites" data-route="favorites">我的根系 <b id="root-source-count">12</b></a>
       <a href="#thinking" data-route="thinking">一起想清楚</a>
+      <a href="#forest" data-route="forest">同题森林 <b id="forest-nav-count">3</b></a>
       <a href="#works" data-route="works">我的作品</a>
     </nav>
     <button class="info-button" data-action="about"><span class="source-pulse"></span>知乎真实数据 <b>↗</b></button>
@@ -82,6 +83,10 @@
 
     <section id="view-favorites" class="view page-view" hidden>
       <div class="page-heading"><div><div class="eyebrow">演示收藏 · 来自知乎公开内容</div><h1>先看真实材料，再决定写什么。</h1><p>这不是你的私人收藏夹。12 条公开内容按 4 个话题预先整理，点击即可回到知乎原文。</p></div><img src="assets/tree-bare.png" alt="资料像根系一样托起知识树"></div>
+      <section id="adopted-root-section" class="adopted-root-section" hidden>
+        <div class="adopted-root-head"><div><div class="section-label">从同题森林采集</div><h2>知友的果实，成为你的新根系。</h2></div><span>采集不代表认同</span></div>
+        <div id="adopted-root-list" class="adopted-root-list"></div>
+      </section>
       <div id="favorite-groups" class="favorite-groups"></div>
     </section>
 
@@ -134,8 +139,30 @@
       </div>
     </section>
 
+    <section id="view-forest" class="view page-view forest-view" hidden>
+      <div class="forest-heading">
+        <div><div class="eyebrow"><span></span> 同一个问题，不同人的知识果实</div><h1>走进同题森林，<br>看看别人怎么想。</h1><p>阅读、提出具体异见，或把有价值的文章采集为自己的带来源根系。</p></div>
+        <div class="forest-canopy" aria-label="三棵代表不同观点的知识树"><img src="assets/tree-full.png" alt=""><img src="assets/tree-full.png" alt=""><img src="assets/tree-full.png" alt=""></div>
+      </div>
+      <div class="forest-toolbar">
+        <div id="forest-topic-tabs" class="forest-topic-tabs" role="tablist" aria-label="选择同题森林"></div>
+        <div class="forest-legend"><span class="near">相近</span><span class="dissent">有异见</span><span class="add">补充</span></div>
+      </div>
+      <div class="forest-layout">
+        <div id="forest-list" class="forest-list"></div>
+        <aside class="forest-guide">
+          <div class="guide-tree"><img src="assets/tree-bare.png" alt="根系示意"><span id="forest-root-total">12</span></div>
+          <h2>一篇文章，还能继续生长。</h2>
+          <div class="forest-rule"><b>01</b><p><strong>查看果实</strong>看结论、理由和来源根系。</p></div>
+          <div class="forest-rule"><b>02</b><p><strong>提出异见</strong>针对观点提问，不针对人。</p></div>
+          <div class="forest-rule"><b>03</b><p><strong>采集为根系</strong>保留作者和引用链，不等于认同。</p></div>
+          <small>本页为好友互动演示，所有知友和互动均为预设，不会真的发送。</small>
+        </aside>
+      </div>
+    </section>
+
     <section id="view-works" class="view page-view" hidden>
-      <div class="page-heading works-heading"><div><div class="eyebrow">你的表达</div><h1>让一条收藏，长成自己的观点。</h1><p>这里保留你亲自说过的话，以及当时参考的知乎来源。</p></div><img src="assets/tree-full.png" alt="已经长成的知树"></div>
+      <div class="page-heading works-heading"><div><div class="eyebrow">你的表达</div><h1>让一条收藏，长成自己的观点。</h1><p>这里先私人保存。只有你再次确认，作品才会进入同题森林。</p></div><img src="assets/tree-full.png" alt="已经长成的知树"></div>
       <div id="work-list" class="work-list"></div>
     </section>
   </main>

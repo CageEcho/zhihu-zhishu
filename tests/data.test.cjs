@@ -42,3 +42,19 @@ test('每个话题都明确写出分歧与用户可补充内容', () => {
     assert.ok(topic.reason.length >= 30);
   }
 });
+
+test('每个同题森林包含 3 个知友果实，覆盖相近、异见和补充', () => {
+  assert.equal(data.forestPosts.length, 12);
+  assert.equal(new Set(data.forestPosts.map((post) => post.id)).size, 12);
+  for (const topic of data.topics) {
+    const posts = data.forestPosts.filter((post) => post.topicId === topic.id);
+    assert.equal(posts.length, 3, topic.id);
+    assert.deepEqual(new Set(posts.map((post) => post.relation)), new Set(['相近', '有异见', '补充']));
+    for (const post of posts) {
+      assert.ok(post.body.length >= 2);
+      assert.ok(post.roots.length >= 3);
+      assert.ok(post.suggestedDissent.length >= 20);
+      assert.ok(post.reply.length >= 20);
+    }
+  }
+});

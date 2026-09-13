@@ -11,10 +11,11 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
 
-  let state = { savedTopics: [], session: null, works: [] };
+  let state = { savedTopics: [], session: null, works: [], adoptedRoots: [], publishedWorkIds: [], socialActions: [], forestTopicId: 'ai-learning' };
   let currentTopic = DATA.topics[0];
   let currentView = '';
   let toastTimer;
+  let pendingDissent = null;
 
   try {
     const restored = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -24,6 +25,10 @@
   } catch (_) {
     // The demo still works in memory when browser storage is unavailable.
   }
+  state.adoptedRoots = Array.isArray(state.adoptedRoots) ? state.adoptedRoots : [];
+  state.publishedWorkIds = Array.isArray(state.publishedWorkIds) ? state.publishedWorkIds : [];
+  state.socialActions = Array.isArray(state.socialActions) ? state.socialActions : [];
+  state.forestTopicId = topicById(state.forestTopicId || state.session?.topicId).id;
 
   function save() {
     try {
@@ -61,6 +66,12 @@
     toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 3200);
   }
 
+  function syncNavCounts() {
+    $('#root-source-count').textContent = 12 + state.adoptedRoots.length;
+    const ownPublished = state.works.filter((work) => state.publishedWorkIds.includes(work.id) && work.topicId === state.forestTopicId).length;
+    $('#forest-nav-count').textContent = 3 + ownPublished;
+  }
+
   function renderHome() {
     $('#topic-grid').innerHTML = DATA.topics.map((topic, index) => {
       const cardClass = topic.id === 'ai-learning' ? 'primary' : topic.id === 'collections' ? 'origin' : '';
@@ -96,6 +107,12 @@
   }
 
   function renderFavorites() {
+    $('#adopted-root-section').hidden = !state.adoptedRoots.length;
+    $('#adopted-root-list').innerHTML = state.adoptedRoots.map((root) => `<article class="adopted-root-card">
+      <span class="root-mark">根</span>
+      <div><div class="source-meta">采集自 ${esc(root.author)} · ${new Date(root.collectedAt).toLocaleDateString('zh-CN')}</div><h3>${esc(root.title)}</h3><p>${esc(root.summary)}</p><div class="root-trace"><span>原作者</span><i>→</i><span>知识果实</span><i>→</i><b>我的根系</b></div></div>
+      <div><button data-action="view-fruit" data-id="${esc(root.fruitId)}">查看果实 ↗</button><button data-action="remove-root" data-id="${esc(root.fruitId)}">移除根系</button></div>
+    </article>`).join('');
     $('#favorite-groups').innerHTML = DATA.topics.map((topic) => `<section class="favorite-group">
       <div class="group-title"><span>${esc(topic.order)} · ${esc(topic.short)}</span><h2>${esc(topic.title)}</h2><a href="#topic/${esc(topic.id)}">查看话题对照 →</a></div>
       <div class="favorite-list">${topic.sources.map((source) => `<article class="favorite-card">
@@ -241,6 +258,7 @@
       updatedAt: new Date().toISOString()
     };
     if (existing) Object.assign(existing, work); else state.works.unshift(work);
+    state.forestTopicId = topic.id;
     save();
     const presetNote = presetFlags(session).some(Boolean) ? '<br>其中标有“演示预设”的段落只用于展示，不代表你的真实经历。' : '';
     showDialog('一张属于你的观点卡，长出来了。', `<img src="assets/tree-full.png" alt="枝叶舒展的知树" style="display:block;width:220px;height:190px;object-fit:contain;margin:0 auto"><p style="text-align:center">它保留了你的三轮表达和当时参考的知乎来源。<br>不会自动发布，也不会替你补写没有说过的内容。${presetNote}</p><div class="dialog-actions"><button class="quiet-button" data-action="download-current">下载 Markdown</button><button class="primary-button" data-action="go-works">看看我的作品 →</button></div>`);
@@ -253,14 +271,103 @@
     }
     $('#work-list').innerHTML = state.works.map((work) => {
       const topic = topicById(work.topicId);
+      const published = state.publishedWorkIds.includes(work.id);
       return `<article class="work-card">
-        <div class="work-card-top"><span class="${presetFlags(work).some(Boolean) ? 'demo-work' : ''}">观点卡 · ${presetFlags(work).some(Boolean) ? '含演示预设' : esc(topic.short)}</span><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div>
+        <div class="work-card-top"><span class="${presetFlags(work).some(Boolean) ? 'demo-work' : ''}">观点卡 · ${presetFlags(work).some(Boolean) ? '含演示预设' : esc(topic.short)}</span><div><em class="work-visibility ${published ? 'published' : ''}">${published ? '已进入同题森林' : '私人保存'}</em><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div></div>
         <h2>${esc(work.title)}</h2>
         ${answerLabels.map((label, index) => `<div class="work-answer"><b>${esc(label)}</b><p>${esc(work.answers[index].trim() || '尚未展开')}</p></div>`).join('')}
         <div class="work-sources">保留 ${topic.sources.length} 条知乎来源</div>
-        <div class="work-actions"><button data-action="continue-work" data-topic="${esc(topic.id)}">继续修改 ↗</button><button data-action="download-work" data-id="${esc(work.id)}">下载</button><button data-action="delete-work" data-id="${esc(work.id)}">删除</button></div>
+        <div class="work-actions"><button class="publish-action" data-action="${published ? 'unpublish-work' : 'publish-work'}" data-id="${esc(work.id)}">${published ? '取消发布' : '发布到同题森林 →'}</button><button data-action="continue-work" data-topic="${esc(topic.id)}">继续修改</button><button data-action="download-work" data-id="${esc(work.id)}">下载</button><button data-action="delete-work" data-id="${esc(work.id)}">删除</button></div>
       </article>`;
     }).join('');
+  }
+
+  function ownFruit(work) {
+    const topic = topicById(work.topicId);
+    return {
+      id: `own-${work.id}`,
+      workId: work.id,
+      topicId: work.topicId,
+      author: '我',
+      initials: '我',
+      relation: '我的',
+      publishedAt: '刚刚发布',
+      rootCount: topic.sources.length,
+      views: 0,
+      dissentCount: 0,
+      collectCount: 0,
+      title: work.title,
+      summary: work.answers.find((answer) => answer.trim()) || '这篇果实还保留了一些没有展开的部分。',
+      body: work.answers.map((answer, index) => `${answerLabels[index]}：${answer.trim() || '尚未展开。'}`),
+      roots: topic.sources.map((source) => source.title),
+      mine: true
+    };
+  }
+
+  function fruitById(id) {
+    const preset = DATA.forestPosts.find((post) => post.id === id);
+    if (preset) return preset;
+    if (id.startsWith('own-')) {
+      const work = state.works.find((item) => item.id === id.slice(4));
+      if (work && state.publishedWorkIds.includes(work.id)) return ownFruit(work);
+    }
+    return null;
+  }
+
+  function relationClass(relation) {
+    return relation === '有异见' ? 'dissent' : relation === '补充' ? 'add' : relation === '我的' ? 'mine' : 'near';
+  }
+
+  function forestItems(topicId) {
+    const mine = state.works.filter((work) => work.topicId === topicId && state.publishedWorkIds.includes(work.id)).map(ownFruit);
+    return [...mine, ...DATA.forestPosts.filter((post) => post.topicId === topicId)];
+  }
+
+  function renderForest() {
+    const topic = topicById(state.forestTopicId);
+    currentTopic = topic;
+    const items = forestItems(topic.id);
+    $('#forest-topic-tabs').innerHTML = DATA.topics.map((item) => `<button role="tab" aria-selected="${item.id === topic.id}" class="${item.id === topic.id ? 'active' : ''}" data-action="set-forest-topic" data-topic="${esc(item.id)}"><span>${esc(item.order)}</span>${esc(item.short)}</button>`).join('');
+    $('#forest-list').innerHTML = items.map((post) => {
+      const collected = state.adoptedRoots.some((root) => root.fruitId === post.id);
+      const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
+      return `<article class="fruit-card ${post.mine ? 'own-fruit' : ''}">
+        <div class="fruit-card-head"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : '演示知友'} · ${esc(post.publishedAt)}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div>
+        <div class="fruit-tree"><img src="assets/tree-full.png" alt="${esc(post.author)}的知识果实"><span>${post.rootCount} 条根系</span></div>
+        <h2>${esc(post.title)}</h2>
+        <p>${esc(post.summary)}</p>
+        <div class="fruit-stats"><span>${post.views + (post.mine ? 1 : 0)} 阅读</span><span>${post.dissentCount + (dissent ? 1 : 0)} 异见</span><span>${post.collectCount + (collected ? 1 : 0)} 采集</span><b>来源可追溯</b></div>
+        <div class="fruit-actions"><button data-action="view-fruit" data-id="${esc(post.id)}">查看果实</button>${post.mine ? '<span>这是你的果实</span>' : `<button class="${dissent ? 'done' : ''}" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '已提出异见' : '提出异见'}</button><button class="${collected ? 'done' : ''}" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '已成为根系 ✓' : '采集为根系'}</button>`}</div>
+      </article>`;
+    }).join('');
+    $('#forest-root-total').textContent = items.reduce((total, item) => total + item.rootCount, 0);
+    syncNavCounts();
+  }
+
+  function showFruit(id) {
+    const post = fruitById(id);
+    if (!post) return;
+    const collected = state.adoptedRoots.some((root) => root.fruitId === post.id);
+    const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
+    const thread = dissent ? `<section class="friend-thread"><div class="thread-head">你和 ${esc(post.author)} 的异见对话 <span>演示互动</span></div><div class="thread-message mine"><b>我提出的问题</b><p>${esc(dissent.content)}</p></div><div class="thread-message"><b>${esc(post.author)} 回复</b><p>${esc(post.reply)}</p></div></section>` : '';
+    showDialog(post.title, `<div class="fruit-detail-author"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : `演示知友 · ${esc(post.publishedAt)}`}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div><p class="fruit-detail-summary">${esc(post.summary)}</p><div class="fruit-body">${post.body.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}</div><div class="fruit-roots"><b>这颗果实的来源根系</b>${post.roots.map((root, index) => `<span>[${index + 1}] ${esc(root)}</span>`).join('')}<small>来源链随果实一起保留；采集不转移内容所有权。</small></div>${thread}<div class="dialog-actions fruit-dialog-actions">${post.mine ? '<button class="primary-button" data-action="go-works">返回我的作品</button>' : `<button class="quiet-button" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '查看 / 修改异见' : '提出一个具体异见'}</button><button class="primary-button" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '已采集为根系 ✓' : '采集为我的根系 →'}</button>`}</div>`);
+  }
+
+  function openDissent(id) {
+    const post = fruitById(id);
+    if (!post || post.mine) return;
+    const existing = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === id);
+    showDialog(`向 ${post.author} 提出异见`, `<p>请针对观点提出具体问题、理由或反例。你的文字在确认前不会“发送”。</p><div class="dialog-note">对方的核心观点：${esc(post.summary)}</div><label class="field-label" for="dissent-input">我想追问</label><textarea id="dissent-input" class="dissent-input" rows="4" maxlength="500" placeholder="例如：我对这个前提有疑问，因为……">${esc(existing?.content || '')}</textarea><div class="dissent-tools"><button data-action="fill-dissent" data-id="${esc(id)}">没有思路？填入一条具体问题</button><span id="dissent-count">${existing?.content.length || 0} / 500</span></div><p id="dissent-error" class="error" role="alert"></p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">返回文章</button><button class="primary-button" data-action="send-dissent" data-id="${esc(id)}">检查并发送 →</button></div><small class="interaction-note">这是本机演示互动，不会真的联系知乎用户。</small>`);
+  }
+
+  function collectAsRoot(id) {
+    const post = fruitById(id);
+    if (!post || post.mine) return;
+    if (state.adoptedRoots.some((root) => root.fruitId === id)) {
+      toast('这颗果实已经在你的根系里。');
+      return;
+    }
+    showDialog('把这颗果实采集为根系？', `<p>采集后会保留文章卡、作者、采集时间和上游来源链，出现在“我的根系”里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
   }
 
   function markdown(work) {
@@ -292,7 +399,7 @@
       currentTopic = topicById(raw.split('/')[1]);
       view = 'topic';
     }
-    if (!['home', 'topic', 'favorites', 'thinking', 'works'].includes(view)) view = 'home';
+    if (!['home', 'topic', 'favorites', 'thinking', 'forest', 'works'].includes(view)) view = 'home';
     $$('.view').forEach((section) => { section.hidden = section.id !== `view-${view}`; });
     $$('[data-route]').forEach((link) => {
       const active = link.dataset.route === view || (view === 'topic' && link.dataset.route === 'home');
@@ -302,8 +409,10 @@
     if (view === 'topic') renderTopic(currentTopic);
     if (view === 'favorites') renderFavorites();
     if (view === 'thinking') renderThinking();
+    if (view === 'forest') renderForest();
     if (view === 'works') renderWorks();
-    const titles = { home: '知树 · 从真实收藏里发现值得写的问题', topic: `${currentTopic.short} · 知树`, favorites: '示例收藏 · 知树', thinking: '一起想清楚 · 知树', works: '我的作品 · 知树' };
+    syncNavCounts();
+    const titles = { home: '知树 · 从真实收藏里发现值得写的问题', topic: `${currentTopic.short} · 知树`, favorites: '我的根系 · 知树', thinking: '一起想清楚 · 知树', forest: '同题森林 · 知树', works: '我的作品 · 知树' };
     document.title = titles[view];
     if (currentView !== view) {
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -313,7 +422,7 @@
   }
 
   const actions = {
-    about: () => showDialog('这版 DEMO，真实在哪里？', `<p>4 个话题不是凭空编出来的。我们通过知乎开放平台检索公开回答和文章，再从材料中找出分歧，整理成首页话题卡。</p><ul><li>共使用 12 条知乎公开内容，每条都保留原文链接。</li><li>页面只展示摘要后的观点，不把搜索摘要冒充完整原文。</li><li>“大家在争什么”是知树的整理，不代表知乎或原作者的统一结论。</li><li>你的回答只保存在当前浏览器，不上传、不自动发布。</li><li>这仍是静态演示：数据获取于 ${DATA.fetchedAt}，页面打开时不会再次请求知乎。</li></ul><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    about: () => showDialog('这版 DEMO，真实在哪里？', `<p>4 个话题不是凭空编出来的。我们通过知乎开放平台检索公开回答和文章，再从材料中找出分歧，整理成首页话题卡。</p><ul><li>共使用 12 条知乎公开内容，每条都保留原文链接。</li><li>页面只展示摘要后的观点，不把搜索摘要冒充完整原文。</li><li>“大家在争什么”是知树的整理，不代表知乎或原作者的统一结论。</li><li>作品先私人保存，只有用户再次确认才进入同题森林。</li><li>同题森林、知友、异见回复和采集均为当前浏览器里的演示，不会联系或发布给真实用户。</li><li>采集果实会保留作者和来源链，但不代表认同，也不会直接变成用户观点。</li><li>这仍是静态演示：数据获取于 ${DATA.fetchedAt}，页面打开时不会再次请求知乎。</li></ul><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
     how: () => showDialog('知树怎么找到一个值得写的问题？', `<p>它先不问“哪篇最正确”，而是做三件事：</p><ul><li>把讨论同一件事的收藏放在一起。</li><li>找出结论、理由或适用条件上的不同。</li><li>检查材料里缺少什么个人经验，再把它变成一个能回答的具体问题。</li></ul><div class="dialog-note">比如实习话题里，分歧不是简单的“去或不去”，而是实习应该多早开始、要不要追求数量，以及专业学习和校园体验值不值得被挤压。</div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">继续看话题</button></div>`),
     'close-dialog': closeDialog,
     'start-thinking': () => startThinking(currentTopic),
@@ -351,6 +460,96 @@
     },
     'create-work': createWork,
     'go-works': () => { closeDialog(); location.hash = 'works'; },
+    'set-forest-topic': (button) => {
+      state.forestTopicId = topicById(button.dataset.topic).id;
+      save();
+      renderForest();
+    },
+    'view-fruit': (button) => showFruit(button.dataset.id),
+    'open-dissent': (button) => openDissent(button.dataset.id),
+    'fill-dissent': (button) => {
+      const post = fruitById(button.dataset.id);
+      if (!post || !$('#dissent-input')) return;
+      $('#dissent-input').value = post.suggestedDissent;
+      $('#dissent-count').textContent = `${post.suggestedDissent.length} / 500`;
+      $('#dissent-error').textContent = '';
+      $('#dissent-input').focus();
+    },
+    'send-dissent': (button) => {
+      const post = fruitById(button.dataset.id);
+      const input = $('#dissent-input');
+      if (!post || !input) return;
+      const content = input.value.trim();
+      if (content.length < 12 || !/[？?因为例如比如如果但是前提]/.test(content)) {
+        $('#dissent-error').textContent = '请补充一个具体问题、理由或反例。可以点上方预设问题快速演示。';
+        input.focus();
+        return;
+      }
+      pendingDissent = { fruitId: post.id, content };
+      showDialog('确认发送这条异见？', `<p>这条内容会进入你和 ${esc(post.author)} 的演示对话。确认前还没有“发送”。</p><div class="dialog-note">${esc(content)}</div><div class="dialog-actions"><button class="quiet-button" data-action="open-dissent" data-id="${esc(post.id)}">返回修改</button><button class="primary-button" data-action="confirm-dissent">确认发送 →</button></div><small class="interaction-note">本次发送只发生在当前浏览器，不会联系真实用户。</small>`);
+    },
+    'confirm-dissent': () => {
+      if (!pendingDissent) return;
+      state.socialActions = state.socialActions.filter((action) => !(action.type === 'dissent' && action.fruitId === pendingDissent.fruitId));
+      state.socialActions.push({ id: `dissent-${Date.now()}`, type: 'dissent', fruitId: pendingDissent.fruitId, content: pendingDissent.content, createdAt: new Date().toISOString() });
+      const id = pendingDissent.fruitId;
+      pendingDissent = null;
+      save();
+      showFruit(id);
+      toast('异见已加入演示对话，对方给出了回应。');
+    },
+    'collect-root': (button) => collectAsRoot(button.dataset.id),
+    'confirm-collect': (button) => {
+      const post = fruitById(button.dataset.id);
+      if (!post || post.mine || state.adoptedRoots.some((root) => root.fruitId === post.id)) return;
+      state.adoptedRoots.unshift({ id: `root-${Date.now()}`, fruitId: post.id, topicId: post.topicId, author: post.author, title: post.title, summary: post.summary, upstreamRoots: [...post.roots], collectedAt: new Date().toISOString() });
+      state.forestTopicId = post.topicId;
+      save();
+      closeDialog();
+      renderForest();
+      toast('已采集为根系：保留作者和上游来源，不代表认同。');
+    },
+    'remove-root': (button) => {
+      const root = state.adoptedRoots.find((item) => item.fruitId === button.dataset.id);
+      if (!root) return;
+      showDialog('移除这条采集根系？', `<p>“${esc(root.title)}”会从你的根系中移除。知友原果实和其他来源不会受到影响。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">取消</button><button class="primary-button" data-action="confirm-remove-root" data-id="${esc(root.fruitId)}">确认移除</button></div>`);
+    },
+    'confirm-remove-root': (button) => {
+      state.adoptedRoots = state.adoptedRoots.filter((root) => root.fruitId !== button.dataset.id);
+      save();
+      closeDialog();
+      renderFavorites();
+      syncNavCounts();
+      toast('这条采集根系已移除。');
+    },
+    'publish-work': (button) => {
+      const work = state.works.find((item) => item.id === button.dataset.id);
+      if (!work) return;
+      showDialog('发布到同题森林？', `<p>作品目前是私人保存。确认后，它会作为知识果实出现在“${esc(topicById(work.topicId).short)}”的演示树林中。</p><div class="dialog-note">将展示：作品标题、三轮表达和 ${topicById(work.topicId).sources.length} 条来源根系。不会真的发布到知乎。</div><p>发布和文章确认是两个独立动作，你之后可以取消发布。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">继续私人保存</button><button class="primary-button" data-action="confirm-publish" data-id="${esc(work.id)}">确认发布 →</button></div>`);
+    },
+    'confirm-publish': (button) => {
+      const work = state.works.find((item) => item.id === button.dataset.id);
+      if (!work) return;
+      if (!state.publishedWorkIds.includes(work.id)) state.publishedWorkIds.push(work.id);
+      state.forestTopicId = work.topicId;
+      save();
+      closeDialog();
+      location.hash = 'forest';
+      toast('你的知识果实已进入同题森林（本机演示）。');
+    },
+    'unpublish-work': (button) => {
+      const work = state.works.find((item) => item.id === button.dataset.id);
+      if (!work) return;
+      showDialog('取消在同题森林中的发布？', '<p>取消后，作品仍会私人保存在“我的作品”里，只是不再出现在同题森林。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">保持发布</button><button class="primary-button" data-action="confirm-unpublish" data-id="' + esc(work.id) + '">确认取消发布</button></div>');
+    },
+    'confirm-unpublish': (button) => {
+      state.publishedWorkIds = state.publishedWorkIds.filter((id) => id !== button.dataset.id);
+      save();
+      closeDialog();
+      renderWorks();
+      syncNavCounts();
+      toast('作品已回到私人保存状态。');
+    },
     'download-current': () => {
       const work = state.works.find((item) => item.topicId === state.session?.topicId);
       downloadWork(work);
@@ -376,6 +575,7 @@
     },
     'confirm-delete': (button) => {
       state.works = state.works.filter((work) => work.id !== button.dataset.id);
+      state.publishedWorkIds = state.publishedWorkIds.filter((id) => id !== button.dataset.id);
       save();
       closeDialog();
       renderWorks();
@@ -386,6 +586,13 @@
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]');
     if (button) actions[button.dataset.action]?.(button);
+  });
+
+  document.addEventListener('input', (event) => {
+    if (event.target.id === 'dissent-input' && $('#dissent-count')) {
+      $('#dissent-count').textContent = `${event.target.value.length} / 500`;
+      if ($('#dissent-error')) $('#dissent-error').textContent = '';
+    }
   });
 
   $('#answer').addEventListener('input', () => {
