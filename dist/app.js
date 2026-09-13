@@ -16,6 +16,7 @@
   let currentView = '';
   let toastTimer;
   let pendingDissent = null;
+  const launchSourceIds = new Set();
 
   try {
     const restored = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -79,10 +80,11 @@
 
   function renderHome() {
     syncNavCounts();
-    const ready = state.userSources.length > 0;
+    const readySources = state.userSources.filter((source) => launchSourceIds.has(source.id));
+    const ready = readySources.length > 0;
     $('#start-tree-button').disabled = !ready;
-    $('#start-tree-button').title = ready ? `已载入 ${state.userSources.length} 条收藏内容` : '请先添加至少一条收藏内容';
-    $('#start-tree-button').setAttribute('aria-label', ready ? `启动知树，已载入 ${state.userSources.length} 条收藏内容` : '启动知树，请先添加收藏内容');
+    $('#start-tree-button').title = ready ? `本次已添加 ${readySources.length} 条收藏内容` : '请先添加至少一条收藏内容';
+    $('#start-tree-button').setAttribute('aria-label', ready ? `启动知树，本次已添加 ${readySources.length} 条收藏内容` : '启动知树，请先添加收藏内容');
   }
 
   function renderTopic(topic) {
@@ -579,8 +581,9 @@
     },
     profile: () => showDialog('演示账户', `<p>这是一套本机 DEMO 数据，不代表真实知乎账号状态。</p><div class="profile-stats"><div><b>${12 + state.userSources.length + state.adoptedRoots.length}</b><span>条根系</span></div><div><b>${state.works.length}</b><span>篇作品</span></div><div><b>${state.publishedWorkIds.length}</b><span>颗公开果实</span></div></div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
     'start-user-tree': () => {
-      if (!state.userSources.length) return;
-      toast(`已载入 ${state.userSources.length} 条收藏内容，开始梳理观点。`);
+      const readySources = state.userSources.filter((source) => launchSourceIds.has(source.id));
+      if (!readySources.length) return;
+      toast(`已载入本次添加的 ${readySources.length} 条收藏内容，开始梳理观点。`);
       startThinking(DATA.topics[0]);
     },
     'go-thinking': () => state.session ? (location.hash = 'thinking') : startThinking(DATA.topics[0]),
@@ -695,6 +698,7 @@
       showDialog('移除这条收藏内容？', `<p>“${esc(source.title)}”将从你的资料中移除。已确认的文章不会因此被自动改写。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">取消</button><button class="primary-button" data-action="confirm-remove-user-source" data-id="${esc(source.id)}">确认移除</button></div>`);
     },
     'confirm-remove-user-source': (button) => {
+      launchSourceIds.delete(button.dataset.id);
       state.userSources = state.userSources.filter((source) => source.id !== button.dataset.id);
       save();
       closeDialog();
@@ -797,7 +801,9 @@
       $('#favorite-error').textContent = '请填写以 http 或 https 开头的来源链接。';
       return;
     }
-    state.userSources.unshift({ id: `source-${Date.now()}`, title, content, url, createdAt: new Date().toISOString() });
+    const source = { id: `source-${Date.now()}`, title, content, url, createdAt: new Date().toISOString() };
+    state.userSources.unshift(source);
+    launchSourceIds.add(source.id);
     save();
     closeDialog();
     syncNavCounts();
