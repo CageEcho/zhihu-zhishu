@@ -11,7 +11,7 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
 
-  let state = { savedTopics: [], session: null, works: [], adoptedRoots: [], publishedWorkIds: [], socialActions: [], forestTopicId: 'ai-learning' };
+  let state = { savedTopics: [], session: null, works: [], draftArticle: null, adoptedRoots: [], publishedWorkIds: [], socialActions: [], forestTopicId: 'ai-learning' };
   let currentTopic = DATA.topics[0];
   let currentView = '';
   let toastTimer;
@@ -29,6 +29,10 @@
   state.publishedWorkIds = Array.isArray(state.publishedWorkIds) ? state.publishedWorkIds : [];
   state.socialActions = Array.isArray(state.socialActions) ? state.socialActions : [];
   state.forestTopicId = topicById(state.forestTopicId || state.session?.topicId).id;
+  state.draftArticle = state.draftArticle && typeof state.draftArticle === 'object' ? state.draftArticle : null;
+  state.works.forEach((work) => {
+    if (!work.status) work.status = state.publishedWorkIds.includes(work.id) ? 'confirmed' : 'note';
+  });
 
   function save() {
     try {
@@ -138,6 +142,7 @@
       return;
     }
     state.session = freshSession(topic);
+    state.draftArticle = null;
     save();
     location.hash = 'thinking';
   }
@@ -239,29 +244,117 @@
     applyPresetAnswer(round);
   }
 
+  function composeArticle(topic, answers) {
+    const sections = [
+      ['我为什么这样想', answers[0]],
+      ['我怎样看待不同意见', answers[1]],
+      ['这套判断适用于什么情况', answers[2]]
+    ];
+    return [`围绕“${topic.title}”，这是我现在能够说清楚的部分。`, ...sections.map(([heading, answer]) => `${heading}\n\n${answer.trim() || '（这一部分尚未展开，我先保留这个空缺。）'}`), `写在最后\n\n这篇文章记录的是我目前的判断。以后遇到新的经历、来源或异见时，我可以回来继续修改。`].join('\n\n');
+  }
+
   function createWork() {
     const session = state.session;
     if (!session) return;
     const topic = topicById(session.topicId);
     if (!session.answers.some((answer) => answer.trim())) {
-      toast('至少写下一点自己的想法，才会形成观点卡。');
+      toast('至少写下一点自己的想法，才能整理文章。');
       return;
     }
     const existing = state.works.find((work) => work.topicId === topic.id);
-    const work = {
+    state.draftArticle = {
       id: existing?.id || `work-${Date.now()}`,
       topicId: topic.id,
-      title: topic.title,
+      title: existing?.title || topic.title,
+      body: composeArticle(topic, session.answers),
       answers: [...session.answers],
       presetUsed: [...presetFlags(session)],
       sourceIds: topic.sources.map((source) => source.id),
+      status: 'draft',
       updatedAt: new Date().toISOString()
     };
-    if (existing) Object.assign(existing, work); else state.works.unshift(work);
     state.forestTopicId = topic.id;
     save();
-    const presetNote = presetFlags(session).some(Boolean) ? '<br>其中标有“演示预设”的段落只用于展示，不代表你的真实经历。' : '';
-    showDialog('一张属于你的观点卡，长出来了。', `<img src="assets/tree-full.png" alt="枝叶舒展的知树" style="display:block;width:220px;height:190px;object-fit:contain;margin:0 auto"><p style="text-align:center">它保留了你的三轮表达和当时参考的知乎来源。<br>不会自动发布，也不会替你补写没有说过的内容。${presetNote}</p><div class="dialog-actions"><button class="quiet-button" data-action="download-current">下载 Markdown</button><button class="primary-button" data-action="go-works">看看我的作品 →</button></div>`);
+    location.hash = 'article';
+  }
+
+  function captureArticle() {
+    if (!state.draftArticle) return;
+    state.draftArticle.title = $('#article-title').value.trim();
+    state.draftArticle.body = $('#article-body').value;
+    state.draftArticle.updatedAt = new Date().toISOString();
+  }
+
+  function renderArticle() {
+    const draft = state.draftArticle;
+    if (!draft) return;
+    const topic = topicById(draft.topicId);
+    const confirmed = draft.status === 'confirmed';
+    const published = confirmed && state.publishedWorkIds.includes(draft.id);
+    $('#article-title').value = draft.title;
+    $('#article-body').value = draft.body;
+    $('#article-word-count').textContent = `${draft.body.replace(/\s/g, '').length} 字`;
+    $('#article-source-count').textContent = `${topic.sources.length} 条来源`;
+    $('#article-save-status').textContent = published ? '文章已确认 · 已进入同题森林' : confirmed ? '文章已确认 · 私人保存' : '草稿保存在当前浏览器';
+    $('#article-step-confirm').classList.toggle('active', !confirmed);
+    $('#article-step-confirm').classList.toggle('done', confirmed);
+    $('#article-step-fruit').classList.toggle('active', confirmed);
+    $('#result-tree').src = confirmed ? 'assets/tree-fruit.png' : 'assets/tree-full.png';
+    $('#result-tree').alt = confirmed ? '结出七枚金色果实的知识树' : '枝叶完整、等待结果的知识树';
+    $('#result-state-badge').textContent = confirmed ? '文章已结果' : '等待确认';
+    $('#result-state-badge').classList.toggle('confirmed', confirmed);
+    $('#result-title').innerHTML = confirmed ? '你的文章，<br>已经结成果实。' : '枝叶已经完整，<br>但还没有结果。';
+    $('#result-copy').textContent = published ? '这颗果实已经在同题森林中。刚才确认的修改也会更新到你的演示果实。' : confirmed ? '果实代表一篇由你检查并确认的文章。它目前仍是私人作品，是否进入同题森林由你决定。' : '先读一遍文章，确认它准确表达了你的意思。只有你亲自确认，树上才会出现果实。';
+    $('#confirm-fruit-button').hidden = confirmed;
+    $('#fruit-next-actions').hidden = !confirmed;
+    $('#article-publish-button').dataset.action = published ? 'go-forest' : 'article-publish';
+    $('#article-publish-button').textContent = published ? '查看同题森林 →' : '放入同题森林 →';
+    $('#result-footnote').textContent = published ? '这是本机演示发布，不会真的发到知乎。' : confirmed ? '私人结果不等于公开发布。' : '确认文章不会自动公开。';
+  }
+
+  function confirmArticle() {
+    const draft = state.draftArticle;
+    if (!draft) return;
+    captureArticle();
+    if (!draft.title || !draft.body.trim()) {
+      toast('标题和正文都需要保留一些内容。');
+      return;
+    }
+    draft.status = 'confirmed';
+    draft.confirmedAt = new Date().toISOString();
+    draft.updatedAt = draft.confirmedAt;
+    const work = { ...draft, answers: [...draft.answers], presetUsed: [...presetFlags(draft)], sourceIds: [...draft.sourceIds] };
+    const index = state.works.findIndex((item) => item.id === work.id);
+    if (index >= 0) state.works[index] = work; else state.works.unshift(work);
+    save();
+    renderArticle();
+    $('#result-tree').classList.remove('fruiting');
+    requestAnimationFrame(() => $('#result-tree').classList.add('fruiting'));
+    toast('文章已确认，知识树结出了果实。');
+  }
+
+  function markArticleAsDraft() {
+    const draft = state.draftArticle;
+    if (!draft) return;
+    captureArticle();
+    draft.status = 'draft';
+    const hasConfirmedVersion = state.works.some((work) => work.id === draft.id && work.status === 'confirmed');
+    $('#article-word-count').textContent = `${draft.body.replace(/\s/g, '').length} 字`;
+    $('#article-save-status').textContent = hasConfirmedVersion ? '修改已暂存 · 需要重新确认' : '草稿保存在当前浏览器';
+    $('#article-step-confirm').classList.add('active');
+    $('#article-step-confirm').classList.remove('done');
+    $('#article-step-fruit').classList.remove('active');
+    $('#result-tree').src = 'assets/tree-full.png';
+    $('#result-tree').alt = '枝叶完整、等待重新确认的知识树';
+    $('#result-tree').classList.remove('fruiting');
+    $('#result-state-badge').textContent = hasConfirmedVersion ? '修改待确认' : '等待确认';
+    $('#result-state-badge').classList.remove('confirmed');
+    $('#result-title').innerHTML = '文章有了修改，<br>需要再次确认。';
+    $('#result-copy').textContent = hasConfirmedVersion ? '森林和作品列表仍保留上一次确认的版本；重新确认后，果实才会更新。' : '先读一遍文章，确认它准确表达了你的意思。只有你亲自确认，树上才会出现果实。';
+    $('#confirm-fruit-button').hidden = false;
+    $('#fruit-next-actions').hidden = true;
+    $('#result-footnote').textContent = '确认文章不会自动公开。';
+    save();
   }
 
   function renderWorks() {
@@ -271,13 +364,15 @@
     }
     $('#work-list').innerHTML = state.works.map((work) => {
       const topic = topicById(work.topicId);
-      const published = state.publishedWorkIds.includes(work.id);
-      return `<article class="work-card">
-        <div class="work-card-top"><span class="${presetFlags(work).some(Boolean) ? 'demo-work' : ''}">观点卡 · ${presetFlags(work).some(Boolean) ? '含演示预设' : esc(topic.short)}</span><div><em class="work-visibility ${published ? 'published' : ''}">${published ? '已进入同题森林' : '私人保存'}</em><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div></div>
+      const confirmed = work.status === 'confirmed';
+      const published = confirmed && state.publishedWorkIds.includes(work.id);
+      return `<article class="work-card ${confirmed ? 'confirmed-work' : 'note-work'}">
+        <div class="work-card-top"><span class="${presetFlags(work).some(Boolean) ? 'demo-work' : ''}">${confirmed ? '知识果实' : '观点卡'} · ${presetFlags(work).some(Boolean) ? '含演示预设' : esc(topic.short)}</span><div><em class="work-visibility ${published ? 'published' : confirmed ? 'confirmed' : ''}">${published ? '已进入同题森林' : confirmed ? '已结果 · 私人保存' : '待整理成文'}</em><time>${new Date(work.updatedAt).toLocaleDateString('zh-CN')}</time></div></div>
+        <div class="work-fruit-preview"><img src="assets/${confirmed ? 'tree-fruit.png' : 'tree-full.png'}" alt="${confirmed ? '结出金色果实的知识树' : '枝叶完整的知识树'}"><span>${confirmed ? '文章已确认结果' : '三轮观点已完成'}</span></div>
         <h2>${esc(work.title)}</h2>
         ${answerLabels.map((label, index) => `<div class="work-answer"><b>${esc(label)}</b><p>${esc(work.answers[index].trim() || '尚未展开')}</p></div>`).join('')}
         <div class="work-sources">保留 ${topic.sources.length} 条知乎来源</div>
-        <div class="work-actions"><button class="publish-action" data-action="${published ? 'unpublish-work' : 'publish-work'}" data-id="${esc(work.id)}">${published ? '取消发布' : '发布到同题森林 →'}</button><button data-action="continue-work" data-topic="${esc(topic.id)}">继续修改</button><button data-action="download-work" data-id="${esc(work.id)}">下载</button><button data-action="delete-work" data-id="${esc(work.id)}">删除</button></div>
+        <div class="work-actions">${confirmed ? `<button class="publish-action" data-action="${published ? 'unpublish-work' : 'publish-work'}" data-id="${esc(work.id)}">${published ? '取消发布' : '发布到同题森林 →'}</button><button data-action="open-article" data-id="${esc(work.id)}">查看文章</button>` : `<button class="publish-action" data-action="make-article-from-work" data-id="${esc(work.id)}">整理成文章 →</button>`}<button data-action="continue-work" data-topic="${esc(topic.id)}">修改观点</button><button data-action="download-work" data-id="${esc(work.id)}">下载</button><button data-action="delete-work" data-id="${esc(work.id)}">删除</button></div>
       </article>`;
     }).join('');
   }
@@ -298,7 +393,7 @@
       collectCount: 0,
       title: work.title,
       summary: work.answers.find((answer) => answer.trim()) || '这篇果实还保留了一些没有展开的部分。',
-      body: work.answers.map((answer, index) => `${answerLabels[index]}：${answer.trim() || '尚未展开。'}`),
+      body: (work.body || composeArticle(topic, work.answers)).split(/\n{2,}/).filter(Boolean),
       roots: topic.sources.map((source) => source.title),
       mine: true
     };
@@ -333,7 +428,7 @@
       const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
       return `<article class="fruit-card ${post.mine ? 'own-fruit' : ''}">
         <div class="fruit-card-head"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : '演示知友'} · ${esc(post.publishedAt)}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div>
-        <div class="fruit-tree"><img src="assets/tree-full.png" alt="${esc(post.author)}的知识果实"><span>${post.rootCount} 条根系</span></div>
+        <div class="fruit-tree"><img src="assets/tree-fruit.png" alt="${esc(post.author)}文章结出的知识果实"><span>${post.rootCount} 条根系</span></div>
         <h2>${esc(post.title)}</h2>
         <p>${esc(post.summary)}</p>
         <div class="fruit-stats"><span>${post.views + (post.mine ? 1 : 0)} 阅读</span><span>${post.dissentCount + (dissent ? 1 : 0)} 异见</span><span>${post.collectCount + (collected ? 1 : 0)} 采集</span><b>来源可追溯</b></div>
@@ -370,12 +465,21 @@
     showDialog('把这颗果实采集为根系？', `<p>采集后会保留文章卡、作者、采集时间和上游来源链，出现在“我的根系”里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
   }
 
+  function openPublishConfirmation(work) {
+    if (!work || work.status !== 'confirmed') {
+      toast('请先确认文章，让知识树结出果实。');
+      return;
+    }
+    showDialog('把这颗果实放入同题森林？', `<p>文章已经确认结果，目前仍是私人保存。再次确认后，它会出现在“${esc(topicById(work.topicId).short)}”的演示树林中。</p><div class="dialog-note">将展示：文章标题、确认后的正文和 ${topicById(work.topicId).sources.length} 条来源根系。不会真的发布到知乎。</div><p>发布和文章确认是两个独立动作，你之后可以取消发布。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">继续私人保存</button><button class="primary-button" data-action="confirm-publish" data-id="${esc(work.id)}">确认放入森林 →</button></div>`);
+  }
+
   function markdown(work) {
     const topic = topicById(work.topicId);
     const flags = presetFlags(work);
+    const article = work.body || composeArticle(topic, work.answers);
     const answers = answerLabels.map((label, index) => `## ${label}${flags[index] ? '（演示预设）' : ''}\n\n${work.answers[index].trim() || '（尚未展开）'}`).join('\n\n');
     const sources = topic.sources.map((source, index) => `### [${index + 1}] ${source.title}\n\n- 作者：${source.author}\n- 类型：${source.type}\n- 知树整理：${source.summary}\n- 原文：${source.url}`).join('\n\n');
-    return `# ${work.title}\n\n> 由“知树 · 知乎真实内容话题 DEMO”保存。未标记“演示预设”的段落为用户输入；演示预设仅用于展示，不代表用户真实经历。材料说明基于 2026-09-13 获取的知乎公开内容摘要，不代表知乎或原作者结论，请回原文核对。\n\n${answers}\n\n## 这次参考的知乎内容\n\n${sources}\n`;
+    return `# ${work.title}\n\n> 由“知树 · 知乎真实内容话题 DEMO”保存。文章由三轮表达整理而来，并经用户确认后结为果实。未标记“演示预设”的段落为用户输入；演示预设仅用于展示，不代表用户真实经历。材料说明基于 2026-09-13 获取的知乎公开内容摘要，不代表知乎或原作者结论，请回原文核对。\n\n## 文章正文\n\n${article}\n\n---\n\n## 三轮原始表达\n\n${answers}\n\n## 这次参考的知乎内容\n\n${sources}\n`;
   }
 
   function downloadWork(work) {
@@ -399,20 +503,22 @@
       currentTopic = topicById(raw.split('/')[1]);
       view = 'topic';
     }
-    if (!['home', 'topic', 'favorites', 'thinking', 'forest', 'works'].includes(view)) view = 'home';
+    if (!['home', 'topic', 'favorites', 'thinking', 'article', 'forest', 'works'].includes(view)) view = 'home';
+    if (view === 'article' && !state.draftArticle) view = state.session ? 'thinking' : 'works';
     $$('.view').forEach((section) => { section.hidden = section.id !== `view-${view}`; });
     $$('[data-route]').forEach((link) => {
-      const active = link.dataset.route === view || (view === 'topic' && link.dataset.route === 'home');
+      const active = link.dataset.route === view || (view === 'topic' && link.dataset.route === 'home') || (view === 'article' && link.dataset.route === 'works');
       link.classList.toggle('active', active);
       if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
     });
     if (view === 'topic') renderTopic(currentTopic);
     if (view === 'favorites') renderFavorites();
     if (view === 'thinking') renderThinking();
+    if (view === 'article') renderArticle();
     if (view === 'forest') renderForest();
     if (view === 'works') renderWorks();
     syncNavCounts();
-    const titles = { home: '知树 · 从真实收藏里发现值得写的问题', topic: `${currentTopic.short} · 知树`, favorites: '我的根系 · 知树', thinking: '一起想清楚 · 知树', forest: '同题森林 · 知树', works: '我的作品 · 知树' };
+    const titles = { home: '知树 · 从真实收藏里发现值得写的问题', topic: `${currentTopic.short} · 知树`, favorites: '我的根系 · 知树', thinking: '一起想清楚 · 知树', article: '确认文章，让它结果 · 知树', forest: '同题森林 · 知树', works: '我的作品 · 知树' };
     document.title = titles[view];
     if (currentView !== view) {
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -422,12 +528,13 @@
   }
 
   const actions = {
-    about: () => showDialog('这版 DEMO，真实在哪里？', `<p>4 个话题不是凭空编出来的。我们通过知乎开放平台检索公开回答和文章，再从材料中找出分歧，整理成首页话题卡。</p><ul><li>共使用 12 条知乎公开内容，每条都保留原文链接。</li><li>页面只展示摘要后的观点，不把搜索摘要冒充完整原文。</li><li>“大家在争什么”是知树的整理，不代表知乎或原作者的统一结论。</li><li>作品先私人保存，只有用户再次确认才进入同题森林。</li><li>同题森林、知友、异见回复和采集均为当前浏览器里的演示，不会联系或发布给真实用户。</li><li>采集果实会保留作者和来源链，但不代表认同，也不会直接变成用户观点。</li><li>这仍是静态演示：数据获取于 ${DATA.fetchedAt}，页面打开时不会再次请求知乎。</li></ul><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    about: () => showDialog('这版 DEMO，真实在哪里？', `<p>4 个话题不是凭空编出来的。我们通过知乎开放平台检索公开回答和文章，再从材料中找出分歧，整理成首页话题卡。</p><ul><li>共使用 12 条知乎公开内容，每条都保留原文链接。</li><li>页面只展示摘要后的观点，不把搜索摘要冒充完整原文。</li><li>“大家在争什么”是知树的整理，不代表知乎或原作者的统一结论。</li><li>三轮表达先整理成可编辑文章；用户确认文章后，树上才会结出果实。</li><li>文章结果后仍是私人保存，只有再次确认才进入同题森林。</li><li>同题森林、知友、异见回复和采集均为当前浏览器里的演示，不会联系或发布给真实用户。</li><li>采集果实会保留作者和来源链，但不代表认同，也不会直接变成用户观点。</li><li>这仍是静态演示：数据获取于 ${DATA.fetchedAt}，页面打开时不会再次请求知乎。</li></ul><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
     how: () => showDialog('知树怎么找到一个值得写的问题？', `<p>它先不问“哪篇最正确”，而是做三件事：</p><ul><li>把讨论同一件事的收藏放在一起。</li><li>找出结论、理由或适用条件上的不同。</li><li>检查材料里缺少什么个人经验，再把它变成一个能回答的具体问题。</li></ul><div class="dialog-note">比如实习话题里，分歧不是简单的“去或不去”，而是实习应该多早开始、要不要追求数量，以及专业学习和校园体验值不值得被挤压。</div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">继续看话题</button></div>`),
     'close-dialog': closeDialog,
     'start-thinking': () => startThinking(currentTopic),
     'confirm-new': (button) => {
       state.session = freshSession(topicById(button.dataset.topic));
+      state.draftArticle = null;
       save();
       closeDialog();
       location.hash = 'thinking';
@@ -459,6 +566,13 @@
       renderThinking();
     },
     'create-work': createWork,
+    'confirm-fruit': confirmArticle,
+    'article-private': () => { location.hash = 'works'; },
+    'article-publish': () => {
+      const work = state.works.find((item) => item.id === state.draftArticle?.id);
+      openPublishConfirmation(work);
+    },
+    'go-forest': () => { closeDialog(); location.hash = 'forest'; },
     'go-works': () => { closeDialog(); location.hash = 'works'; },
     'set-forest-topic': (button) => {
       state.forestTopicId = topicById(button.dataset.topic).id;
@@ -524,12 +638,11 @@
     },
     'publish-work': (button) => {
       const work = state.works.find((item) => item.id === button.dataset.id);
-      if (!work) return;
-      showDialog('发布到同题森林？', `<p>作品目前是私人保存。确认后，它会作为知识果实出现在“${esc(topicById(work.topicId).short)}”的演示树林中。</p><div class="dialog-note">将展示：作品标题、三轮表达和 ${topicById(work.topicId).sources.length} 条来源根系。不会真的发布到知乎。</div><p>发布和文章确认是两个独立动作，你之后可以取消发布。</p><div class="dialog-actions"><button class="quiet-button" data-action="close-dialog">继续私人保存</button><button class="primary-button" data-action="confirm-publish" data-id="${esc(work.id)}">确认发布 →</button></div>`);
+      openPublishConfirmation(work);
     },
     'confirm-publish': (button) => {
       const work = state.works.find((item) => item.id === button.dataset.id);
-      if (!work) return;
+      if (!work || work.status !== 'confirmed') return;
       if (!state.publishedWorkIds.includes(work.id)) state.publishedWorkIds.push(work.id);
       state.forestTopicId = work.topicId;
       save();
@@ -554,6 +667,19 @@
       const work = state.works.find((item) => item.topicId === state.session?.topicId);
       downloadWork(work);
     },
+    'open-article': (button) => {
+      const work = state.works.find((item) => item.id === button.dataset.id);
+      if (!work) return;
+      state.draftArticle = { ...work, body: work.body || composeArticle(topicById(work.topicId), work.answers), answers: [...work.answers], presetUsed: [...presetFlags(work)], sourceIds: [...work.sourceIds] };
+      save();
+      location.hash = 'article';
+    },
+    'make-article-from-work': (button) => {
+      const work = state.works.find((item) => item.id === button.dataset.id);
+      if (!work) return;
+      state.session = { topicId: work.topicId, round: 3, reached: 3, answers: [...work.answers], presetUsed: [...presetFlags(work)], updatedAt: new Date().toISOString() };
+      createWork();
+    },
     'continue-work': (button) => {
       const work = state.works.find((item) => item.topicId === button.dataset.topic);
       state.session = {
@@ -564,6 +690,7 @@
         presetUsed: [...presetFlags(work)],
         updatedAt: new Date().toISOString()
       };
+      state.draftArticle = null;
       save();
       location.hash = 'thinking';
     },
@@ -576,6 +703,7 @@
     'confirm-delete': (button) => {
       state.works = state.works.filter((work) => work.id !== button.dataset.id);
       state.publishedWorkIds = state.publishedWorkIds.filter((id) => id !== button.dataset.id);
+      if (state.draftArticle?.id === button.dataset.id) state.draftArticle = null;
       save();
       closeDialog();
       renderWorks();
@@ -608,6 +736,9 @@
     renderSummary();
     save();
   });
+
+  $('#article-title').addEventListener('input', markArticleAsDraft);
+  $('#article-body').addEventListener('input', markArticleAsDraft);
 
   $('#dialog').addEventListener('click', (event) => {
     if (event.target !== $('#dialog')) return;

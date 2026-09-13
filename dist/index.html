@@ -126,7 +126,7 @@
               <h2>这是你真正想说的吗？</h2>
               <p>下面只归拢你的原话，没有替你补写立场。空缺会继续保留。</p>
               <div id="answer-review"></div>
-              <div class="answer-actions"><button class="quiet-button" data-action="restart-rounds">返回修改</button><button class="primary-button" data-action="create-work">保存为观点卡 →</button></div>
+              <div class="answer-actions"><button class="quiet-button" data-action="restart-rounds">返回修改</button><button class="primary-button" data-action="create-work">整理成文章 →</button></div>
             </section>
           </article>
           <aside class="growth-panel">
@@ -139,10 +139,39 @@
       </div>
     </section>
 
+    <section id="view-article" class="view page-view article-view" hidden>
+      <div class="article-topbar">
+        <a href="#thinking">← 返回检查观点</a>
+        <div class="article-steps"><span class="active">01 整理草稿</span><i></i><span id="article-step-confirm">02 用户确认</span><i></i><span id="article-step-fruit">03 结成果实</span></div>
+        <span id="article-save-status">草稿保存在当前浏览器</span>
+      </div>
+      <div class="article-layout">
+        <article class="article-paper">
+          <div class="paper-kicker"><span>文章草稿</span><b>AI 只整理结构和语序</b></div>
+          <label class="sr-only" for="article-title">文章标题</label>
+          <input id="article-title" class="article-title" maxlength="160" aria-label="文章标题">
+          <div class="article-meta"><span>来自三轮表达</span><span id="article-word-count">0 字</span><span id="article-source-count">3 条来源</span></div>
+          <label class="sr-only" for="article-body">文章正文</label>
+          <textarea id="article-body" class="article-body" maxlength="30000" aria-label="文章正文"></textarea>
+          <div class="origin-legend"><span class="user-origin">用户表达</span><span class="ai-origin">AI 结构整理</span><span class="source-origin">知乎来源</span><small>正文可以直接修改；来源不会因改写而丢失。</small></div>
+        </article>
+        <aside class="result-panel">
+          <div class="result-tree-wrap"><span id="result-state-badge">等待确认</span><img id="result-tree" src="assets/tree-full.png" alt="枝叶完整、等待结果的知识树"></div>
+          <div class="section-label">文章与果实</div>
+          <h2 id="result-title">枝叶已经完整，<br>但还没有结果。</h2>
+          <p id="result-copy">先读一遍文章，确认它准确表达了你的意思。只有你亲自确认，树上才会出现果实。</p>
+          <div class="result-checks"><span>✓ 核心判断来自三轮回答</span><span>✓ 保留公开内容来源</span><span>✓ 发布仍是单独动作</span></div>
+          <button id="confirm-fruit-button" class="primary-button" data-action="confirm-fruit">确认文章，让它结果 <span>→</span></button>
+          <div id="fruit-next-actions" class="fruit-next-actions" hidden><button class="quiet-button" data-action="article-private">查看我的作品</button><button id="article-publish-button" class="primary-button" data-action="article-publish">放入同题森林 →</button></div>
+          <small id="result-footnote">确认文章不会自动公开。</small>
+        </aside>
+      </div>
+    </section>
+
     <section id="view-forest" class="view page-view forest-view" hidden>
       <div class="forest-heading">
         <div><div class="eyebrow"><span></span> 同一个问题，不同人的知识果实</div><h1>走进同题森林，<br>看看别人怎么想。</h1><p>阅读、提出具体异见，或把有价值的文章采集为自己的带来源根系。</p></div>
-        <div class="forest-canopy" aria-label="三棵代表不同观点的知识树"><img src="assets/tree-full.png" alt=""><img src="assets/tree-full.png" alt=""><img src="assets/tree-full.png" alt=""></div>
+        <div class="forest-canopy" aria-label="三棵代表不同观点的知识树"><img src="assets/tree-fruit.png" alt=""><img src="assets/tree-fruit.png" alt=""><img src="assets/tree-fruit.png" alt=""></div>
       </div>
       <div class="forest-toolbar">
         <div id="forest-topic-tabs" class="forest-topic-tabs" role="tablist" aria-label="选择同题森林"></div>
@@ -162,7 +191,7 @@
     </section>
 
     <section id="view-works" class="view page-view" hidden>
-      <div class="page-heading works-heading"><div><div class="eyebrow">你的表达</div><h1>让一条收藏，长成自己的观点。</h1><p>这里先私人保存。只有你再次确认，作品才会进入同题森林。</p></div><img src="assets/tree-full.png" alt="已经长成的知树"></div>
+      <div class="page-heading works-heading"><div><div class="eyebrow">你的知识果实</div><h1>确认过的文章，才会在树上结果。</h1><p>文章结果后仍先私人保存。只有你再次确认，果实才会进入同题森林。</p></div><img src="assets/tree-fruit.png" alt="结出金色果实的知树"></div>
       <div id="work-list" class="work-list"></div>
     </section>
   </main>
