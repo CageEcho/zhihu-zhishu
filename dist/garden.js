@@ -27,7 +27,7 @@
   }
   function render(animate=false){
     syncFruits();window.renderZhishuGarden(garden,world);fit();
-    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),1050);}
+    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);const hold=world.dataset.stage==='branches'?2150:1050;const art=world.querySelector('.tree-art');if(world.dataset.stage==='branches'&&art){art.addEventListener('animationstart',()=>{clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),hold);},{once:true});growTimer=setTimeout(()=>world.classList.remove('growing'),hold+2500);}else growTimer=setTimeout(()=>world.classList.remove('growing'),hold);}
     persist();
   }
   function open(title,html,type){

@@ -265,3 +265,8 @@ body[data-view="garden"] #view-garden{animation:none}
 /* Stage-tinted hover halos for root and branch hit areas. */
 .g7.roots .g7-hit:hover{box-shadow:0 0 0 2px #b39a8955,0 0 24px #e3d5c866}
 .g7.branches .g7-hit[data-garden-action="branch"]:hover{box-shadow:0 0 0 2px #d2a07d66,0 0 24px #f2dfd177}
+/* Branches stage entrance: the soil settles first, then the trunk and branches grow upward, then the cards arrive. */
+.g7.branches.growing .tree-art{transform-origin:50% 92%;animation:g7-tree-grow 1.7s cubic-bezier(.22,.8,.3,1) both}
+@keyframes g7-tree-grow{0%{opacity:0;clip-path:inset(100% 0 0);transform:translateY(14px) scale(.9)}16%{opacity:1;clip-path:inset(76% 0 0);transform:translateY(6px) scale(.94)}52%{clip-path:inset(42% 0 0);transform:translateY(2px) scale(.985)}82%{clip-path:inset(10% 0 0);transform:translateY(0) scale(1.01)}100%{clip-path:inset(-4% 0 0);transform:none}}
+.g7.branches.growing .scene-svg,.g7.branches.growing .node-tag,.g7.branches.growing .g7-hit,.g7.branches.growing .garden-root-overflow{animation:g7-tags-in .55s ease both 1.45s}
+@keyframes g7-tags-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
