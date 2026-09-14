@@ -2,7 +2,8 @@
 'use strict';
 const esc = value => String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 window.renderZhishuGarden = (garden, world) => {
-const stage=window.ZhishuTreeStore.stage(garden);
+const storedStage=window.ZhishuTreeStore.stage(garden);
+const stage=world.dataset.canopyTransition==='branches'?'branches':storedStage;
 const fruits=garden.fruits||[];
 const fruitPoints=[[917,484],[538,442],[724,362],[840,551],[460,530],[820,279]];
 const displayFruits=fruits.slice(-6);
@@ -27,14 +28,11 @@ const defs=`<defs>
 <radialGradient id="fruitRed" cx=".27" cy=".22" r=".88"><stop stop-color="#ffab98"/><stop offset=".3" stop-color="#f05b4c"/><stop offset=".68" stop-color="#cf3032"/><stop offset="1" stop-color="#901d27"/></radialGradient>
 <radialGradient id="fruitHalo"><stop stop-color="#ff9f8e" stop-opacity=".46"/><stop offset=".48" stop-color="#e84e43" stop-opacity=".15"/><stop offset="1" stop-color="#d23b38" stop-opacity="0"/></radialGradient>
 <linearGradient id="leafGreen" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#c5dc6e"/><stop offset=".45" stop-color="#88b549"/><stop offset="1" stop-color="#568333"/></linearGradient>
-<radialGradient id="canopyLight" cx="32%" cy="22%" r="82%"><stop stop-color="#e3f69a"/><stop offset=".48" stop-color="#a6d65a"/><stop offset="1" stop-color="#659d37"/></radialGradient>
-<radialGradient id="canopyMid" cx="30%" cy="20%" r="84%"><stop stop-color="#d2ed7e"/><stop offset=".5" stop-color="#8fc64b"/><stop offset="1" stop-color="#548b32"/></radialGradient>
-<radialGradient id="canopyDark" cx="34%" cy="22%" r="86%"><stop stop-color="#bddf69"/><stop offset=".52" stop-color="#78b343"/><stop offset="1" stop-color="#477c30"/></radialGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
 <filter id="smallshadow" x="-.8" y="-.8" width="2.6" height="2.6"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#54612c" flood-opacity=".2"/></filter>
 <filter id="glow" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="7"/></filter>
 </defs>`;
-function leaf(x,y,rotate=0,scale=1,glow=false){return `<g transform="translate(${x} ${y}) scale(${scale})">${glow?'<ellipse cy="-30" rx="118" ry="78" fill="#dff2ad" opacity=".54" filter="url(#glow)"/>':''}<g filter="url(#smallshadow)"><ellipse cx="-58" cy="-29" rx="53" ry="37" fill="url(#canopyDark)"/><ellipse cx="2" cy="-45" rx="62" ry="43" fill="url(#canopyMid)"/><ellipse cx="59" cy="-27" rx="52" ry="37" fill="url(#canopyDark)"/><ellipse cx="-29" cy="-70" rx="43" ry="32" fill="url(#canopyLight)"/><ellipse cx="27" cy="-71" rx="45" ry="33" fill="url(#canopyLight)"/><ellipse cx="-82" cy="0" rx="31" ry="25" fill="url(#canopyMid)"/><ellipse cx="82" cy="1" rx="31" ry="25" fill="url(#canopyMid)"/><ellipse cx="-34" cy="-8" rx="65" ry="43" fill="url(#canopyMid)"/><ellipse cx="35" cy="-7" rx="63" ry="42" fill="url(#canopyLight)"/><ellipse cx="0" cy="10" rx="61" ry="35" fill="url(#canopyDark)"/></g><ellipse cx="-38" cy="-48" rx="19" ry="10" fill="#f2fac9" opacity=".26" transform="rotate(-18 -38 -48)"/><ellipse cx="23" cy="-52" rx="20" ry="10" fill="#f5fbd0" opacity=".22" transform="rotate(-12 23 -52)"/></g>`;}
+function canopyCluster(x,y,rotate=0,scale=1,index=0){return `<g class="answer-canopy-layer answer-canopy-layer-${index+1}" transform="translate(${x} ${y}) rotate(${rotate}) scale(${scale})"><image class="answer-canopy" href="assets/canopy-cluster-v2.png" x="-195" y="-135" width="390" height="269" preserveAspectRatio="xMidYMid meet"/></g>`;}
 function fruit(x,y,scale=1){return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cy="6" rx="59" ry="58" fill="url(#fruitHalo)"/><path d="M0-34q-2-18 8-29" stroke="#80532e" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M4-52q28-23 41-2q-23 14-41 2Z" fill="url(#leafGreen)"/><path d="M0-35C-12-48-34-48-43-29C-55-7-43 29-19 45C-11 51-4 49 0 46C5 49 12 51 20 45C44 29 55-7 43-29C34-48 12-48 0-35Z" fill="url(#fruitRed)" stroke="#f47b6d" stroke-width="1.2" filter="url(#smallshadow)"/><ellipse cx="-20" cy="-9" rx="8" ry="15" fill="#ffd2c8" opacity=".58" transform="rotate(22)"/><path d="M-37 15Q-28 39-9 44" fill="none" stroke="#ff8c7c" stroke-width="2" opacity=".22"/></g>`;}
 function pointer(x,y){return `<g transform="translate(${x} ${y}) rotate(-15)" filter="url(#smallshadow)"><path d="M0 0V29l7-7 6 13 6-3-7-12 11-2Z" fill="white" stroke="#677b74" stroke-width="1.3"/></g>`;}
 function node(x,y,color='#b4ce81'){return `<circle cx="${x}" cy="${y}" r="12" fill="#f8ffed" opacity=".25"/><circle cx="${x}" cy="${y}" r="6" fill="${color}" stroke="#fff" stroke-width="2.5"/>`;}
@@ -43,7 +41,7 @@ function sceneSVG(){let art=defs;if(stage==='seed'){art+=`<ellipse cx="735" cy="
 if(rank>0){art+=`<g fill="none" stroke="#a3b48d" stroke-width="1.2"><path d="M574 747Q544 758 512 760H482M694 763L694 780M852 757L894 763H946"/></g>${node(574,747)}${node(694,763)}${node(852,757)}`;}
 if(stage==='branches'){art+=`<path d="M577 462L511 462L472 422M781 258L811 241M883 492L946 492L981 486" stroke="#a6b996" stroke-width="1.2" fill="none"/>${node(577,462)}${node(781,258)}${node(883,492)}`;}
 
-(rank>=3?[[431,394,-51,.81],[975,373,48,.71],[987,555,71,.72]]:[[509,409,-51,.81],[781,258,42,.72],[973,545,70,.72]]).forEach((p,i)=>{if(garden.answers[i]?.trim())art+=leaf(...p,stage==='leaves'&&i===0);});
+if(stage==='branches')[[520,390,-2,.88],[790,220,1,.94],[960,420,2,.9]].forEach((p,i)=>{if(garden.answers[i]?.trim())art+=canopyCluster(...p,i);});
 displayFruits.forEach((item,i)=>{
  const [x,y]=fruitPoints[i];
  if(item.published)art+=`<g class="harvest-mark"><path d="M${x} ${y-24}q-4-16 4-29" fill="none" stroke="#8b7749" stroke-width="5" stroke-linecap="round"/><path d="M${x+2} ${y-44}q16-17 31-5q-19 11-31 5" fill="#9ab66a"/><circle cx="${x}" cy="${y}" r="18" fill="#fffdf2" stroke="#b8c994" stroke-width="1.5"/><path d="M${x-7} ${y}l5 5 10-11" stroke="#8bab61" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="${x-27}" y="${y+23}" width="54" height="20" rx="6" fill="#fffdf2"/><text x="${x}" y="${y+37}" text-anchor="middle" fill="#8aa36d" font-size="11">已采摘</text></g>`;

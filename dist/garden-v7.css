@@ -222,3 +222,9 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7 .fruit-symbol,#garden-dialog .garden-golden-fruit{width:64px;height:58px;margin-top:10px;border-radius:48% 48% 45% 45%/42% 42% 56% 56%;background:radial-gradient(circle at 27% 23%,#ffab98 0,#ef5a4b 31%,#cf3032 68%,#901d27 100%);box-shadow:inset -7px -8px 13px #74152145,0 7px 15px #8f20262b;position:relative;transform:none}
 .g7 .fruit-symbol:before,#garden-dialog .garden-golden-fruit:before{content:'';position:absolute;left:31px;top:-15px;width:5px;height:19px;border-radius:4px;background:#80532e;transform:rotate(13deg)}
 .g7 .fruit-symbol:after,#garden-dialog .garden-golden-fruit:after{content:'';position:absolute;left:34px;top:-10px;width:26px;height:13px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#a8ca5c,#5e8b38);transform:rotate(-20deg)}
+
+/* One completed answer grows one reusable 2.5D canopy cluster. SVG order fixes
+   the overlap: first below second, second below third. */
+.g7 .answer-canopy{filter:drop-shadow(0 10px 12px #36582530);transform-box:fill-box;transform-origin:center}
+.g7.growing .answer-canopy{animation:g7-canopy-bloom .72s cubic-bezier(.18,.88,.28,1) both}
+@keyframes g7-canopy-bloom{0%{opacity:0;transform:scale(.72) translateY(18px);filter:saturate(.72) drop-shadow(0 2px 3px #36582512)}65%{opacity:1;transform:scale(1.035) translateY(-2px);filter:saturate(1.08) drop-shadow(0 12px 15px #36582536)}100%{opacity:1;transform:none;filter:drop-shadow(0 10px 12px #36582530)}}

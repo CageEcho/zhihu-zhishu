@@ -7,7 +7,7 @@
   const bridge = () => window.ZhishuGardenBridge;
   let storage;try{storage=window.localStorage;}catch{storage={getItem:()=>null,setItem:()=>{throw Error('storage unavailable');}};}
   const store = window.ZhishuTreeStore.createStore(storage,bridge().getLegacyData());
-  let garden=store.current(),dialogType='',activeRound=0,available=[],fileSources=[],returnFocus=null,growTimer=0,selectedFruitId=null;
+  let garden=store.current(),dialogType='',activeRound=0,available=[],fileSources=[],returnFocus=null,growTimer=0,canopyTimer=0,selectedFruitId=null;
   const safeUrl=value=>{try{const url=new URL(String(value));return /^https?:$/.test(url.protocol)?url.href:'';}catch{return '';}};
   const cleanSource=source=>({...source,id:String(source.id||`source-${crypto.randomUUID()}`),title:String(source.title||'未命名收藏').slice(0,160),content:String(source.content??source.summary??'').slice(0,18000),url:safeUrl(source.url),personal:source.personal!==false});
   function persist(){const result=store.save(garden);garden=result.tree;if(!result.ok){const status=$('#garden-save-status');if(status)status.textContent='当前仅临时保存，请保留此页面';}return result.ok;}
@@ -170,8 +170,13 @@
     }
     if(form.id==='garden-dialogue-form'){
       const index=Number(form.dataset.round),value=$('#garden-answer').value.trim();if(!value){error('请写下一点想法，再让树叶生长。');return;}
+      const wasIncomplete=!garden.answers.every(answer=>answer.trim());
       if(garden.answers[index]!==value){if(garden.article?.confirmed){rememberFruit();garden.article=null;garden.published=false;}else if(garden.article)garden.article.contextChanged=true;}
-      garden.answers[index]=value;garden.answerDrafts[index]=value;garden.presetUsed[index]=value===presets[index];close();render(true);
+      garden.answers[index]=value;garden.answerDrafts[index]=value;garden.presetUsed[index]=value===presets[index];close();clearTimeout(canopyTimer);
+      if(wasIncomplete&&garden.answers.every(answer=>answer.trim())){
+        world.dataset.canopyTransition='branches';render(true);
+        canopyTimer=setTimeout(()=>{delete world.dataset.canopyTransition;if(location.hash==='#garden')render(true);},2300);
+      }else{delete world.dataset.canopyTransition;render(true);}
     }
     if(form.id==='garden-article-form'){
       const title=$('#garden-article-title').value.trim(),body=$('#garden-article-body').value.trim();if(!title||!body){error('请保留文章标题和正文。');return;}
