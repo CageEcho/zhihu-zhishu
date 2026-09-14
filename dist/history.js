@@ -11,7 +11,7 @@
   function date(value){const d=new Date(value);return Number.isNaN(+d)?'已保存':d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
   function treeCard(tree){
     const model=window.ZhishuTreeStore,stage=model.stage(tree),state=model.status(tree),title=model.title(tree),done=tree.answers.filter(x=>x.trim()).length,published=tree.fruits.filter(f=>f.published).length;
-    const image=stage==='seed'?'soil-seed-v2.png':stage==='roots'?'soil-roots-v2.png':stage==='branches'?'tree-bare.png':tree.fruits.length?'tree-fruit.png':'tree-full.png';
+    const image=stage==='seed'?'soil-seed-v2.png':stage==='roots'?'soil-roots-v2.png':stage==='branches'?'tree-bare.png':tree.fruits.length?'tree-fruit-red.png':'tree-full.png';
     const progress=tree.article&&!tree.article.confirmed?'文章草稿待完成':state==='published'?'果实已入林，树上的思考仍在':state==='fruit'?'文章已完成，可以摘果发布':stage==='roots'?'已生根 · 等待你的主要观点':`${done} / 3 轮对话 · 继续让枝叶生长`;
     return `<button class="history-tree-card" data-tree-open="${esc(tree.id)}" aria-label="恢复知树：${esc(title)}"><div class="history-thumb ${stage}"><span class="history-state ${state}">${statusNames[state]}</span><img src="assets/${image}" alt="${statusNames[state]}的知识树" loading="lazy">${tree.fruits.length?`<span class="history-fruit-count">${tree.fruits.length} 颗果实${published?` · ${published} 已发布`:''}</span>`:''}</div><div class="history-card-body"><h2>${esc(title)}</h2><p>${esc(tree.viewpoint||tree.sources[tree.selectedRoot]?.content||'从收藏出发，记录自己的理解。')}</p><div class="history-card-progress">${progress}</div><div class="history-card-meta"><time datetime="${esc(tree.updatedAt)}">${date(tree.updatedAt)}</time><span>${tree.sources.length} 条根系</span><b>回到树上 ↗</b></div></div></button>`;
   }
