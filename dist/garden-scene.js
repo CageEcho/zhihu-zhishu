@@ -7,7 +7,7 @@ const stage=world.dataset.canopyTransition==='branches'?'branches':storedStage;
 const canopyFrom=world.dataset.canopyFrom;delete world.dataset.canopyFrom;
 const enterStage=world.dataset.enter;delete world.dataset.enter;
 const fruits=garden.fruits||[];
-const fruitPoints=[[917,484],[538,442],[724,362],[840,551],[460,530],[820,279]];
+const fruitPoints=[[724,372],[538,442],[917,484],[840,551],[460,530],[820,279]];
 const displayFruits=fruits.slice(-6);
 const rank={seed:0,roots:1,branches:2,leaves:3,fruit:4,published:4}[stage], modal='';
 const data={
@@ -27,7 +27,8 @@ const defs=`<defs>
 <linearGradient id="rootColor" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="#cbb17d"/><stop offset=".5" stop-color="#e3c79a"/><stop offset="1" stop-color="#b7986c"/></linearGradient>
 <radialGradient id="seedGold" cx=".3" cy=".3"><stop stop-color="#ffe5a0"/><stop offset=".45" stop-color="#d8ad60"/><stop offset="1" stop-color="#a47336"/></radialGradient>
 <radialGradient id="seedHalo"><stop stop-color="#fde69c" stop-opacity=".8"/><stop offset=".42" stop-color="#f7d872" stop-opacity=".25"/><stop offset="1" stop-color="#ecca69" stop-opacity="0"/></radialGradient>
-<radialGradient id="fruitRed" cx=".27" cy=".22" r=".88"><stop stop-color="#ffab98"/><stop offset=".3" stop-color="#f05b4c"/><stop offset=".68" stop-color="#cf3032"/><stop offset="1" stop-color="#901d27"/></radialGradient>
+<radialGradient id="fruitRed" cx=".36" cy=".3" r=".82"><stop stop-color="#ff9a8c"/><stop offset=".3" stop-color="#f2453f"/><stop offset=".68" stop-color="#c9202b"/><stop offset="1" stop-color="#7a0f18"/></radialGradient>
+<radialGradient id="fruitShade" cx=".5" cy=".95" r=".7"><stop stop-color="#5c0a12" stop-opacity=".55"/><stop offset="1" stop-color="#5c0a12" stop-opacity="0"/></radialGradient>
 <radialGradient id="fruitHalo"><stop stop-color="#ff9f8e" stop-opacity=".46"/><stop offset=".48" stop-color="#e84e43" stop-opacity=".15"/><stop offset="1" stop-color="#d23b38" stop-opacity="0"/></radialGradient>
 <linearGradient id="leafGreen" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#c5dc6e"/><stop offset=".45" stop-color="#88b549"/><stop offset="1" stop-color="#568333"/></linearGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
@@ -37,7 +38,7 @@ const defs=`<defs>
 const CANOPY_LAYERS=[["left", 391.6, 275.5, 350.2, 294.0], ["top", 572.4, 141.7, 456.5, 306.6], ["right", 792.9, 412.7, 283.6, 168.8]];
 function canopyCluster(index){const [name,x,y,w,h]=CANOPY_LAYERS[index];return `<g class="answer-canopy-layer answer-canopy-layer-${index+1}"><image class="answer-canopy" href="assets/canopy-${name}.png" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/></g>`;}
 function canopyLayers(answers){return [0,1,2].map(i=>answers[i]?.trim()?canopyCluster(i):'').join('');}
-function fruit(x,y,scale=1){return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cy="6" rx="59" ry="58" fill="url(#fruitHalo)"/><path d="M0-34q-2-18 8-29" stroke="#80532e" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M4-52q28-23 41-2q-23 14-41 2Z" fill="url(#leafGreen)"/><path d="M0-35C-12-48-34-48-43-29C-55-7-43 29-19 45C-11 51-4 49 0 46C5 49 12 51 20 45C44 29 55-7 43-29C34-48 12-48 0-35Z" fill="url(#fruitRed)" stroke="#f47b6d" stroke-width="1.2" filter="url(#smallshadow)"/><ellipse cx="-20" cy="-9" rx="8" ry="15" fill="#ffd2c8" opacity=".58" transform="rotate(22)"/><path d="M-37 15Q-28 39-9 44" fill="none" stroke="#ff8c7c" stroke-width="2" opacity=".22"/></g>`;}
+function fruit(x,y,scale=1){return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cy="4" rx="50" ry="48" fill="url(#fruitHalo)"/><path d="M0-27C-5-43-30-40-37-20C-44 4-30 34-8 40C-3 41 3 41 8 40C30 34 44 4 37-20C30-40 5-43 0-27Z" fill="url(#fruitRed)" stroke="#e8564c" stroke-width="1" filter="url(#smallshadow)"/><path d="M0-27C-5-43-30-40-37-20C-44 4-30 34-8 40C-3 41 3 41 8 40C30 34 44 4 37-20C30-40 5-43 0-27Z" fill="url(#fruitShade)"/><ellipse cx="-15" cy="-9" rx="8" ry="14" fill="#fff" opacity=".72" transform="rotate(-16 -15 -9)"/><circle cx="-8" cy="-21" r="3" fill="#fff" opacity=".9"/><path d="M0-28Q2-38 5-46" fill="none" stroke="#6a4426" stroke-width="4.5" stroke-linecap="round"/><path d="M-6-28q6 4 12 0" fill="none" stroke="#9a1720" stroke-width="2" opacity=".6"/></g>`;}
 function pointer(x,y){return `<g transform="translate(${x} ${y}) rotate(-15)" filter="url(#smallshadow)"><path d="M0 0V29l7-7 6 13 6-3-7-12 11-2Z" fill="white" stroke="#677b74" stroke-width="1.3"/></g>`;}
 function node(x,y,color='#b4ce81'){return `<circle cx="${x}" cy="${y}" r="12" fill="${['#7a5a3d','#ad6637'].includes(color)?'#fff4e6':'#f8ffed'}" opacity=".35"/><circle cx="${x}" cy="${y}" r="6" fill="${color}" stroke="#fff" stroke-width="2.5"/>`;}
 function tag(cls,title,sub='',active=false,action='root',index=0){return `<button type="button" class="node-tag ${cls} ${active?'active':''}" data-garden-action="${action}" data-index="${index}"><span class="dot"></span><span><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>${active?'<span class="arrow">↗</span>':''}</button>`;}
@@ -52,7 +53,7 @@ if(stage==='branches')art+=canopyLayers(garden.answers);
 displayFruits.forEach((item,i)=>{
  const [x,y]=fruitPoints[i];
  if(item.published)art+=`<g class="harvest-mark"><path d="M${x} ${y-24}q-4-16 4-29" fill="none" stroke="#8b7749" stroke-width="5" stroke-linecap="round"/><path d="M${x+2} ${y-44}q16-17 31-5q-19 11-31 5" fill="#9ab66a"/><circle cx="${x}" cy="${y}" r="18" fill="#fffdf2" stroke="#b8c994" stroke-width="1.5"/><path d="M${x-7} ${y}l5 5 10-11" stroke="#8bab61" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="${x-27}" y="${y+23}" width="54" height="20" rx="6" fill="#fffdf2"/><text x="${x}" y="${y+37}" text-anchor="middle" fill="#8aa36d" font-size="11">已采摘</text></g>`;
- else art+=fruit(x,y,fruits.length>1?.78:1);
+ else art+=fruit(x,y,fruits.length>1?.66:.84);
 });
 return `<svg class="scene-svg" viewBox="0 0 1440 900" aria-hidden="true">${art}</svg>`;}
 function hit(x,y,action,index,label,w=76,h=76){return `<button type="button" class="g7-hit" style="left:${x-w/2}px;top:${y-h/2}px;width:${w}px;height:${h}px" data-garden-action="${action}" data-index="${index}" aria-label="${esc(label)}"></button>`;}
@@ -74,7 +75,7 @@ function renderTags(){
  if(stage==='leaves')h+=`<button type="button" class="article-guide-orb" data-garden-action="article-guide" aria-label="三轮思考已完成，生成文章"><span class="article-guide-bloom"></span><span class="article-guide-corner tl"></span><span class="article-guide-corner tr"></span><span class="article-guide-corner bl"></span><span class="article-guide-corner br"></span><span class="article-guide-ring"></span><span class="article-guide-core"><span class="article-guide-scan"></span><svg class="article-guide-apple" viewBox="0 0 72 72" aria-hidden="true"><defs><linearGradient id="guideAppleGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e9b533"/><stop offset="1" stop-color="#c98d17"/></linearGradient></defs><path d="M36 27c-7-7-19-7-24 3C5 44 14 63 27 67c4 1 7-1 9-3 2 2 5 4 9 3 13-4 22-23 15-37-5-10-17-10-24-3Z" fill="url(#guideAppleGold)"/><path d="M36 26c-1-8 2-13 7-17" fill="none" stroke="#b8801a" stroke-width="4" stroke-linecap="round"/><path d="M40 15c6-8 14-7 18-3-5 6-12 7-18 3Z" fill="#d9a325"/></svg></span><span class="article-guide-hand"><i class="w1"></i><i class="w2"></i><svg viewBox="0 0 34 40" aria-hidden="true"><path d="M13 20V8c0-2 1-3 3-3s3 1 3 3v9-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v9c0 7-5 11-11 11h-1c-4 0-7-2-9-5l-5-7c-1-2-1-4 1-5 1-1 3 0 4 1l3 4"/></svg></span></button>`;
  displayFruits.forEach((item,i)=>{
  const [x,y]=fruitPoints[i];
- h+=`<button type="button" class="g7-hit fruit-hit ${item.published?'picked':''}" style="left:${x-43}px;top:${y-53}px;width:86px;height:105px" data-garden-action="${item.published?'harvest':'fruit'}" data-id="${esc(item.id)}" aria-label="${item.published?'已采摘，回看文章':'果实，查看文章'}：${esc(item.title)}"></button>`;
+ h+=`<button type="button" class="g7-hit fruit-hit ${item.published?'picked':''}" style="left:${x-40}px;top:${y-48}px;width:80px;height:92px" data-garden-action="${item.published?'harvest':'fruit'}" data-id="${esc(item.id)}" aria-label="${item.published?'已采摘，回看文章':'果实，查看文章'}：${esc(item.title)}"></button>`;
  });
  if(fruits.length)h+=`<div class="callout fruit-call"><strong>${fruits.some(f=>f.published)?'果柄记得这篇文章':'一篇文章，一颗果实'}</strong><small>${fruits.some(f=>f.published)?'点击已采摘标记回看 · 点击树叶继续写':'点击果实查看 · 摘下发布到同题树林'}</small><button class="garden-fruit-archive" data-garden-action="fruit-list">查看这棵树的 ${fruits.length} 颗果实 ↗</button></div>`;
  if(garden.sources.length>5)h+=`<button class="garden-root-overflow" data-garden-action="all-roots">查看全部 ${garden.sources.length} 条根系 →</button>`;
