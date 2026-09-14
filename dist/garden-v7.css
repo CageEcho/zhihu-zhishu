@@ -275,8 +275,8 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7.roots .g7-hit:hover{box-shadow:0 0 0 2px #b39a8955,0 0 24px #e3d5c866}
 .g7.branches .g7-hit[data-garden-action="branch"]:hover{box-shadow:0 0 0 2px #d2a07d66,0 0 24px #f2dfd177}
 /* Branches stage entrance: play the seed -> sprout -> trunk clip in place; the clip's own progress drives the hand-off to the bare tree art. */
-.g7 .sprout-clip{position:absolute;left:184px;top:143px;width:1114px;height:477px;overflow:hidden;z-index:1;pointer-events:none;clip-path:polygon(0 0,100% 0,100% 438px,636px 477px,450px 477px,0 438px);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);opacity:1;transition:opacity .6s ease}
-.g7 .sprout-video{position:absolute;left:0;top:0;width:1114px;height:626px;object-fit:fill;mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 52% 62% at 50% 60%,#000 56%,transparent 100%);mask-image:radial-gradient(ellipse 52% 62% at 50% 60%,#000 56%,transparent 100%)}
+.g7 .sprout-clip{position:absolute;left:184px;top:143px;width:1114px;height:477px;overflow:hidden;z-index:1;mix-blend-mode:multiply;isolation:auto;pointer-events:none;clip-path:polygon(0 0,100% 0,100% 438px,636px 477px,450px 477px,0 438px);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);opacity:1;transition:opacity .6s ease}
+.g7 .sprout-video{position:absolute;left:0;top:0;width:1114px;height:626px;object-fit:fill;filter:url(#sproutKey);-webkit-mask-image:radial-gradient(ellipse 60% 70% at 50% 60%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 60% 70% at 50% 60%,#000 62%,transparent 100%)}
 .g7.sprout .sprout-clip{opacity:0;transition:opacity .25s ease}
 .g7.sprout.sprout-live .sprout-clip{opacity:1;transition:opacity .6s ease}
 .g7.sprout.sprout-done .sprout-clip{opacity:0}
