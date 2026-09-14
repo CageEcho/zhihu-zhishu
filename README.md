@@ -18,6 +18,26 @@
 
 ---
 
+## 线上地址
+
+**🌐 https://s4un71nck60neho2ichmh.apigateway-cn-beijing.volceapi.com/**
+
+部署在火山引擎函数服务 veFaaS（华北 2 · 北京），以静态站点方式托管 `dist/` 目录，通过 Serverless API 网关提供 HTTPS 访问。无需登录，打开即用；所有演示数据只保存在你的浏览器里。
+
+### 重新部署
+
+```bash
+npm i -g @volcengine/vefaas-cli     # 首次安装
+vefaas login --sso                  # 浏览器登录火山引擎账号
+cd dist && vefaas deploy --yes      # 已 link 到应用 zhihu-zhishu，直接发布最新代码
+vefaas domains                      # 查看访问地址
+```
+
+- 网关按静态资源规则缓存：`*.css / *.js / 图片` 长缓存，`*.html` 不缓存。改动样式或脚本后请同步更新 `index.html` 里对应文件的 `?v=` 版本号，用户刷新即可拿到新版本。
+- 应用与底层函数的 ID 记录在 `dist/.vefaas/config.json`（本地文件，不入仓库）。
+
+---
+
 ## 它解决什么问题
 
 我们收藏了很多内容，却很少把它们变成自己的东西。收藏夹越来越厚，观点却没有长出来。

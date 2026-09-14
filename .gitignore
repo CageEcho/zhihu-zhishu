@@ -3,3 +3,6 @@
 qa/*.png
 qa/preview/
 qa/artifact/
+.vefaas/
+dist/.vefaas/
+dist/DefaultCaddyFile
