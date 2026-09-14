@@ -186,3 +186,58 @@ body[data-view="garden"] #view-garden{animation:none}
 #view-garden .g7{background:linear-gradient(180deg,#fff 0 48%,#f5f9f6 62%,#edf5ef 100%)}
 
 .g7.branches .leaf2{left:845px;top:181px}.g7.branches .leaf3{left:1010px;top:514px}
+
+/* Context cards stay next to the seed/root that opened them. They are
+   non-modal so the garden remains visible and usable behind the card. */
+#garden-dialog.contextual{position:fixed;inset:auto;margin:0;transform:none;z-index:100;width:min(540px,calc(100vw - 28px));max-height:min(78vh,calc(100vh - 28px));padding:24px 26px;border:1px solid #dfe8e1;border-radius:16px;background:#fff;box-shadow:0 18px 52px #25445b28,0 0 0 1px #ffffff;overflow-y:auto}
+#garden-dialog.contextual::backdrop{background:transparent;backdrop-filter:none}
+#garden-dialog.contextual::before{content:'';position:absolute;top:var(--context-arrow-y,50%);width:0;height:0;margin-top:-9px;border:9px solid transparent;pointer-events:none}
+#garden-dialog.contextual[data-side="right"]::before{left:-18px;border-right-color:#fff}
+#garden-dialog.contextual[data-side="left"]::before{right:-18px;border-left-color:#fff}
+#garden-dialog.contextual .dialog-head{margin-bottom:2px}
+#garden-dialog.contextual>h2{font-size:23px;line-height:1.55;margin:15px 0 12px}
+#garden-dialog.contextual .garden-dialog-lead{margin-bottom:12px!important}
+#garden-dialog.contextual .garden-source-options{max-height:40vh}
+#garden-dialog.contextual::after{content:'';position:absolute;top:var(--context-arrow-y,50%);width:16px;height:1px;margin-top:-.5px;background:#c7d8bd;pointer-events:none}
+#garden-dialog.contextual[data-side="right"]::after{left:-16px}
+#garden-dialog.contextual[data-side="left"]::after{right:-16px}
+.g7.roots .tree-art{left:360px;top:109px;width:720px;height:720px;clip-path:inset(64% 0 0);object-fit:contain;mix-blend-mode:normal;filter:none}
+
+/* Seed preview card: follows the cursor from the glowing seed and keeps the
+   surrounding garden visible while the user decides what to import. */
+.g7 .seed-hover-card{position:absolute;left:810px;top:114px;width:560px;z-index:30;padding:20px 26px 16px;border:1px solid #e2ebe4;border-radius:34px;background:rgba(255,255,255,.985);box-shadow:0 24px 70px rgba(68,116,89,.15),0 0 0 1px rgba(255,255,255,.86);opacity:0;visibility:hidden;transform:translateY(8px) scale(.985);transform-origin:left center;transition:opacity .2s ease,transform .2s ease,visibility .2s ease;pointer-events:none}
+.g7.seed.seed-hovering .seed-hover-card{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+.g7 .seed-hover-card:before{content:'';position:absolute;left:-14px;top:390px;width:26px;height:26px;background:#fff;border-left:1px solid #e2ebe4;border-bottom:1px solid #e2ebe4;transform:rotate(45deg)}
+.g7 .seed-card-kicker{display:flex;align-items:center;gap:13px;color:#699265;font-size:13px;font-weight:550}
+.g7 .seed-card-icon{width:47px;height:47px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#effbdd,#e4f7d4);color:#4f824d}
+.g7 .seed-card-icon svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.g7 .seed-card-kicker button{width:42px;height:42px;margin-left:auto;border-radius:50%;background:#f2f5f6;color:#8d9da8;font-size:24px;font-weight:300;line-height:1}
+.g7 .seed-hover-card h2{margin:14px 0 5px;color:#173d36;font-size:26px;line-height:1.35;font-weight:700;letter-spacing:.2px}
+.g7 .seed-card-lead{margin:0;color:#6f8495;font-size:14px;line-height:1.7}
+.g7 .seed-card-tabs{display:flex;gap:31px;margin-top:15px;border-bottom:1px solid #e5edf2}
+.g7 .seed-card-tabs span{padding:0 8px 10px;color:#8fa0ad;font-size:15px}
+.g7 .seed-card-tabs .selected{color:#176af0;border-bottom:3px solid #176af0;font-weight:650}
+.g7 .seed-card-help{margin:12px 0 10px;color:#8296a6;font-size:13px}
+.g7 .seed-card-list{display:grid;gap:10px;overflow:visible}
+.g7 .seed-card-list article{height:112px;display:flex;align-items:flex-start;gap:13px;padding:13px 15px;border:1px solid #dbe5ea;border-radius:17px;background:#fff}
+.g7 .seed-card-list article.selected{border-color:#b9dda9;background:linear-gradient(135deg,#f4faeb,#eef8eb);box-shadow:inset 0 0 0 1px rgba(184,219,166,.22)}
+.g7 .seed-card-list article>i{display:grid;place-items:center;width:22px;height:22px;flex:none;margin-top:1px;border:2px solid #929da3;border-radius:4px;background:#fff}
+.g7 .seed-card-list article.selected>i{border-color:#176af0;background:#176af0;color:#fff}
+.g7 .seed-card-list article>i svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.g7 .seed-card-list b{display:block;color:#25394b;font-size:14px;line-height:1.35;font-weight:680}
+.g7 .seed-card-list small{display:block;margin-top:4px;color:#89a0b3;font-size:11px}
+.g7 .seed-card-list p{margin:4px 0 0;color:#7790a3;font-size:12px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.g7 .seed-card-actions{display:flex;align-items:center;gap:13px;margin-top:13px;padding-top:12px;border-top:1px solid #e8eef2}
+.g7 .seed-card-count{margin-right:auto;color:#6e869a;font-size:13px}
+.g7 .seed-card-actions button{height:44px;padding:0 23px;border-radius:22px;font-size:14px;font-weight:650}
+.g7 .seed-card-back{border:1px solid #d9e2e8;background:#f8fafb;color:#536b7d}
+.g7 .seed-card-primary{border:1px solid #176af0;background:#176af0;color:#fff;box-shadow:0 7px 18px rgba(23,106,240,.2)}
+.g7 .seed-card-primary span{margin-left:17px;font-size:18px}
+.g7 .seed-cursor{position:absolute;left:562px;top:622px;z-index:28;width:31px;height:39px;opacity:0;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(30,52,56,.35));transition:opacity .15s ease}
+.g7 .seed-cursor svg{width:100%;height:100%;fill:#fff;stroke:#30494c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.g7.seed.seed-hovering .seed-cursor{opacity:1}
+.g7.seed .intro.central{left:40%}
+.g7.seed .tree-art,.g7.seed .scene-svg,.g7.seed .seed-hover-target,.g7.seed .seed-label{transform:translateX(-160px)}
+.g7.seed.seed-hovering .seed-label{opacity:0}
+@media(max-width:900px){.g7 .seed-hover-card{left:calc(50% - 280px);top:105px}.g7.seed.seed-hovering .intro.central{opacity:.18}}
+@media(max-width:700px){#garden-dialog.contextual{width:min(440px,calc(100vw - 24px));max-height:min(78vh,calc(100vh - 24px));padding:20px 19px}#garden-dialog.contextual::before{display:none}#garden-dialog.contextual::after{display:none}}

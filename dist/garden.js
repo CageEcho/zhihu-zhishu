@@ -7,7 +7,7 @@
   const bridge = () => window.ZhishuGardenBridge;
   let storage;try{storage=window.localStorage;}catch{storage={getItem:()=>null,setItem:()=>{throw Error('storage unavailable');}};}
   const store = window.ZhishuTreeStore.createStore(storage,bridge().getLegacyData());
-  let garden=store.current(),dialogType='',activeRound=0,available=[],fileSources=[],returnFocus=null,growTimer=0,selectedFruitId=null;
+  let garden=store.current(),dialogType='',activeRound=0,available=[],fileSources=[],returnFocus=null,growTimer=0,selectedFruitId=null,contextualAnchor=null;
   const safeUrl=value=>{try{const url=new URL(String(value));return /^https?:$/.test(url.protocol)?url.href:'';}catch{return '';}};
   const cleanSource=source=>({...source,id:String(source.id||`source-${crypto.randomUUID()}`),title:String(source.title||'未命名收藏').slice(0,160),content:String(source.content??source.summary??'').slice(0,18000),url:safeUrl(source.url),personal:source.personal!==false});
   function persist(){const result=store.save(garden);garden=result.tree;if(!result.ok){const status=$('#garden-save-status');if(status)status.textContent='当前仅临时保存，请保留此页面';}return result.ok;}
@@ -30,26 +30,46 @@
     if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),1050);}
     persist();
   }
-  function open(title,html,type){
+  const contextualTypes=new Set(['import','viewpoint','source']);
+  function positionContextual(){
+    if(!dialog.open||!dialog.classList.contains('contextual')||!contextualAnchor?.isConnected)return;
+    const anchor=contextualAnchor.getBoundingClientRect(),card=dialog.getBoundingClientRect(),gap=16,pad=14,vw=innerWidth,vh=innerHeight;
+    let side=anchor.left+anchor.width/2<vw/2?'right':'left';
+    let left=side==='right'?anchor.right+gap:anchor.left-card.width-gap;
+    if(left<pad||left+card.width>vw-pad){side=side==='right'?'left':'right';left=side==='right'?anchor.right+gap:anchor.left-card.width-gap;}
+    left=Math.max(pad,Math.min(left,vw-card.width-pad));
+    const top=Math.max(pad,Math.min(anchor.top+anchor.height/2-card.height/2,vh-card.height-pad));
+    dialog.style.left=`${Math.round(left)}px`;dialog.style.top=`${Math.round(top)}px`;dialog.dataset.side=side;
+    const arrowY=Math.max(18,Math.min(anchor.top+anchor.height/2-top,card.height-18));
+    dialog.style.setProperty('--context-arrow-y',`${Math.round(arrowY)}px`);
+  }
+  function open(title,html,type,anchor=null){
     if(!dialog.open) returnFocus=document.activeElement;
+    if(anchor&&dialog.contains(anchor))anchor=null;
+    if(anchor)contextualAnchor=anchor;
+    else if(contextualTypes.has(type))contextualAnchor=null;
     dialogType=type;
     $('#garden-dialog-title').textContent=title;
     $('#garden-dialog-body').innerHTML=html;
     dialog.classList.toggle('article-dialog',type==='article');
-    if(!dialog.open)dialog.showModal();
+    const contextual=!!contextualAnchor&&contextualTypes.has(type);
+    dialog.classList.toggle('contextual',contextual);
+    if(!dialog.open){if(contextual)dialog.show();else dialog.showModal();}
+    if(contextual)positionContextual();
+    if(contextual)requestAnimationFrame(positionContextual);else{dialog.style.removeProperty('left');dialog.style.removeProperty('top');dialog.style.removeProperty('--context-arrow-y');delete dialog.dataset.side;}
   }
-  function close(){dialog.close();dialogType='';if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});}
+  function close(){if(dialog.open)dialog.close();dialogType='';contextualAnchor=null;dialog.classList.remove('contextual');dialog.style.removeProperty('left');dialog.style.removeProperty('top');dialog.style.removeProperty('--context-arrow-y');delete dialog.dataset.side;if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});}
   const error = text => {$('#garden-form-error').textContent=text;};
   const actions=(primary,secondary='回到树上')=>`<p id="garden-form-error" class="error" role="alert"></p><div class="garden-dialog-actions"><button type="button" class="quiet-button" data-garden-action="close-dialog">${secondary}</button><button type="submit" class="primary-button">${primary} →</button></div>`;
   function sourceRows(sources,checked=false){return sources.map((s,i)=>`<label><input type="checkbox" name="source" value="${i}" ${(checked&&i<3)||garden.suggestedSources.some(item=>item.id===s.id)?'checked':''}><span><b>${esc(s.title)}</b><small>${s.personal?'我的收藏内容':'演示收藏 · 知乎公开资料'}</small><p>${esc(s.content)}</p></span></label>`).join('');}
-  function openImport(tab='saved'){
+  function openImport(tab='saved',anchor=null){
     const sources=bridge().getSources(garden.topicId);available=[...new Map([...garden.suggestedSources,...sources.personal,...sources.demo].map(source=>[source.id,cleanSource(source)])).values()];
     const tabs=`<div class="garden-import-tabs" role="tablist" aria-label="收藏导入方式">${[['saved','已有收藏'],['paste','粘贴内容'],['file','导入文件']].map(([id,name])=>`<button type="button" role="tab" aria-selected="${tab===id}" data-garden-action="import-tab" data-tab="${id}">${name}</button>`).join('')}</div>`;
     let body='';
     if(tab==='saved') body=`<p class="garden-question-help">选择 1–5 条内容，每条收藏对应一条主根。</p><form id="garden-import-form"><div class="garden-source-options">${sourceRows(available)}</div>${actions('导入，让它生根')}</form><button class="garden-text-link" data-garden-action="demo-import">用 3 条演示收藏体验</button>`;
     if(tab==='paste')body=`<form id="garden-paste-form"><label for="garden-source-title">收藏标题</label><input id="garden-source-title" maxlength="160" placeholder="这条收藏在讨论什么？" required><label for="garden-source-content">收藏内容</label><textarea id="garden-source-content" rows="5" maxlength="18000" placeholder="粘贴原文、摘要，或你收藏时记下的话。" required></textarea><label for="garden-source-url">来源链接 <small>选填</small></label><input id="garden-source-url" placeholder="https://" maxlength="2000">${actions('种下这条收藏')}</form>`;
     if(tab==='file')body=`<p class="garden-question-help">支持 TXT、Markdown、JSON 收藏列表，以及浏览器导出的 HTML 书签文件（最大 1 MB）。</p><label class="garden-file-label">选择收藏文件<input type="file" id="garden-source-file" accept=".txt,.md,.json,.html,.htm"></label><div id="garden-file-preview"></div><p id="garden-form-error" class="error" role="alert"></p>`;
-    open('把你的收藏，种在这里。',`<p class="garden-dialog-lead">收藏的内容与来源，会成为这棵树的根系。</p>${tabs}${body}<small class="garden-dialog-note">本地演示：使用你保存或导入的内容，不会读取账号中的私人收藏夹。</small>`,'import');
+    open('把你的收藏，种在这里。',`<p class="garden-dialog-lead">收藏的内容与来源，会成为这棵树的根系。</p>${tabs}${body}<small class="garden-dialog-note">本地演示：使用你保存或导入的内容，不会读取账号中的私人收藏夹。</small>`,'import',anchor||contextualAnchor);
   }
   function plant(sources){
     if(!sources.length||sources.length>5){error('请选择 1–5 条收藏内容。');return;}
@@ -58,12 +78,12 @@
     garden.sources=cleaned;garden.selectedRoot=0;garden.suggestedSources=[];if(!garden.title)garden.title=cleaned[0].title;
     close();render(true);
   }
-  function openRoot(index){
+  function openRoot(index,anchor=null){
     const source=garden.sources[index];if(!source)return;
     garden.selectedRoot=index;
     const detail=`<div class="garden-source-detail"><b>${esc(source.title)}</b><span>${source.personal?'我的收藏':'演示收藏 · 知乎公开资料'}</span><p>${esc(source.content)}</p>${source.url?`<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">查看收藏来源 ↗</a>`:''}</div>`;
-    if(garden.viewpoint){open('回到这条观点的来处',`${detail}<div class="garden-source-quote"><b>我的主要观点</b><p>${esc(garden.viewpoint)}</p></div><div class="garden-dialog-actions"><button class="primary-button" data-garden-action="close-dialog">回到树上</button></div>`,'source');return;}
-    open('读过别人的想法，轮到你了。',`${detail}<form id="garden-viewpoint-form"><label for="garden-viewpoint">你的主要观点</label><textarea id="garden-viewpoint" rows="4" maxlength="1600" placeholder="你认同什么，又想补充什么？">${esc(garden.viewpointDraft)}</textarea><div class="garden-stance-options">${['我认同这条观点，但它也有适用条件。','我有不同看法，想从自己的经历出发说明。','我想补充一个角度，让这个观点更完整。'].map((s,i)=>`<button type="button" data-garden-action="stance" data-index="${i}">${['认同，但有条件','我有不同看法','补充一个角度'][i]}</button>`).join('')}</div>${actions('确定观点，让它抽枝')}</form>`,'viewpoint');
+    if(garden.viewpoint){open('回到这条观点的来处',`${detail}<div class="garden-source-quote"><b>我的主要观点</b><p>${esc(garden.viewpoint)}</p></div><div class="garden-dialog-actions"><button class="primary-button" data-garden-action="close-dialog">回到树上</button></div>`,'source',anchor);return;}
+    open('读过别人的想法，轮到你了。',`${detail}<form id="garden-viewpoint-form"><label for="garden-viewpoint">你的主要观点</label><textarea id="garden-viewpoint" rows="4" maxlength="1600" placeholder="你认同什么，又想补充什么？">${esc(garden.viewpointDraft)}</textarea><div class="garden-stance-options">${['我认同这条观点，但它也有适用条件。','我有不同看法，想从自己的经历出发说明。','我想补充一个角度，让这个观点更完整。'].map((s,i)=>`<button type="button" data-garden-action="stance" data-index="${i}">${['认同，但有条件','我有不同看法','补充一个角度'][i]}</button>`).join('')}</div>${actions('确定观点，让它抽枝')}</form>`,'viewpoint',anchor);
   }
   const rounds=[['理由与经历','为什么你这样想？','可以结合一次亲身经历，说明你的理由。'],['回应不同看法','如果有人不同意你的观点，你会怎么回应？','试着理解对方的理由，再说说自己的判断。'],['适用边界','什么情况下，你会调整这个观点？','说清条件、例外，或还没有答案的部分。']];
   const presets=['我倾向先自己尝试，再把遇到的具体困难交给 AI。例如做一道题时，我会先列出思路，再用提示核对。这样才能知道自己哪里还没有理解。','我理解有人更看重效率。但拿到答案不等于学会；如果关掉答案后不能重新完成，就需要回到概念和关键步骤，而不是继续复制。','面对完全陌生的内容或时间紧迫的任务，我会更早寻求帮助。不过重要结论和来源仍需自己核对；这个做法并不适用于所有人和所有任务。'];
@@ -93,6 +113,19 @@
     open(published?'已采摘的果实，仍留着你的思考。':'这颗果实，已经成熟。',`<div class="garden-fruit-summary"><span class="garden-golden-fruit ${published?'harvested':''}"></span><div><b>${esc(item.title)}</b><p>${published?'已采摘 · 已发布到同题树林':'已完成 · 私人保存'}</p></div></div><article class="garden-read-article">${item.body.split(/\n\n+/).map(paragraph=>`<p>${esc(paragraph)}</p>`).join('')}</article><div class="garden-fruit-tools"><button data-garden-action="download-fruit">下载文章</button><span>${item.sources?.length||garden.sources.length} 条收藏来源 · 三轮表达已保留</span></div>${published?`<div class="garden-dialog-actions"><button class="quiet-button" data-garden-action="close-dialog">回到树上</button><button class="primary-button" data-garden-action="forest" data-topic="${esc(item.topicId||garden.topicId)}">查看同题树林 →</button></div><button class="garden-text-link" data-garden-action="unpublish-fruit">撤回为私人果实</button>`:`<form id="garden-publish-form"><label for="garden-forest-topic">选择一片同题树林</label><select id="garden-forest-topic">${window.ZHISHU_DATA.topics.map(topic=>`<option value="${esc(topic.id)}" ${topic.id===(item.topicId||garden.topicId)?'selected':''}>${esc(topic.short)}</option>`).join('')}</select>${actions('摘下并发布','先留在树上')}</form>`}<small class="garden-dialog-note">本地演示：发布只保存在当前浏览器，不会发送到知乎。</small>`,'fruit');
   }
   function fruitList(){open('这棵树结出的果实',`<div class="garden-fruit-list">${garden.fruits.map(f=>`<button data-garden-action="fruit" data-id="${esc(f.id)}"><span>${f.published?'已采摘':'已结果'}</span><b>${esc(f.title)}</b><small>点击回看文章 →</small></button>`).join('')}</div>`,'fruit-list');}
+  let seedHoverTimer;
+  document.addEventListener('pointerover',e=>{
+    const target=e.target.closest?.('.seed-hover-target,.seed-hover-card');
+    if(!target||!world.contains(target)||world.dataset.stage!=='seed')return;
+    clearTimeout(seedHoverTimer);world.classList.add('seed-hovering');
+  });
+  document.addEventListener('pointerout',e=>{
+    const from=e.target.closest?.('.seed-hover-target,.seed-hover-card');
+    if(!from||!world.contains(from))return;
+    const to=e.relatedTarget;
+    if(to&&to.closest?.('.seed-hover-target,.seed-hover-card'))return;
+    seedHoverTimer=setTimeout(()=>world.classList.remove('seed-hovering'),650);
+  });
   function showSavedSource(id){const source=window.ZhishuHistory.sources().find(s=>s.id===id);if(!source)return;open('这条收藏的来处',`<div class="garden-source-detail"><b>${esc(source.title)}</b><span>${esc(source.origin||'历史收藏')}</span><p>${esc(source.content)}</p>${source.url?`<a href="${esc(safeUrl(source.url))}" target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a>`:''}${source.upstreamRoots?.length?`<p>上游来源：${source.upstreamRoots.map(esc).join('；')}</p>`:''}</div><div class="garden-dialog-actions"><button class="quiet-button" data-garden-action="close-dialog">返回记录</button><button class="primary-button" data-garden-action="use-source" data-id="${esc(source.id)}">用它种一棵树 →</button></div>`,'saved-source');}
   async function readFile(file){
     if(!file)return;
@@ -128,12 +161,15 @@
     persist();
   }
   document.addEventListener('click',e=>{
-    const button=e.target.closest('[data-garden-action]');if(!button)return;
+    const button=e.target.closest('[data-garden-action]');
+    if(!button){if(dialog.open&&dialog.classList.contains('contextual')&&!dialog.contains(e.target)){capture();close();render();}return;}
     capture();const action=button.dataset.gardenAction,index=Number(button.dataset.index||0);
-    if(action==='seed')openImport();
-    if(action==='import-tab')openImport(button.dataset.tab);
+    if(action==='seed-hover-close'){world.classList.remove('seed-hovering');return;}
+    if(action==='seed-hover-import'){openImport('saved',world.querySelector('.seed-hover-target'));return;}
+    if(action==='seed')openImport('saved',button);
+    if(action==='import-tab')openImport(button.dataset.tab,contextualAnchor||button);
     if(action==='demo-import')plant(bridge().getSources(garden.topicId).demo.slice(0,3));
-    if(action==='root')openRoot(index);
+    if(action==='root')openRoot(index,button);
     if(action==='all-roots')open('全部收藏根系',`<div class="garden-fruit-list">${garden.sources.map((source,i)=>`<button data-garden-action="root" data-index="${i}"><span>根系 ${i+1}</span><b>${esc(source.title)}</b></button>`).join('')}</div>`,'sources');
     if(action==='branch')openRound(index);
     if(action==='leaf')openLeaf(index);
@@ -187,10 +223,10 @@
       close();render(true);world.classList.add('harvesting');bridge().toast('果实已进入同题树林。枝头保留了已采摘标记，可以随时回看。');
     }
   });
-  dialog.addEventListener('cancel',()=>{capture();setTimeout(()=>{dialogType='';render();},0);});
+  dialog.addEventListener('cancel',e=>{e.preventDefault();capture();close();render();});
   dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){capture();close();render();}});
   window.addEventListener('hashchange',()=>{if(location.hash!=='#garden'){capture();if(dialog.open)close();}});
-  window.addEventListener('resize',fit);
+  window.addEventListener('resize',()=>{fit();positionContextual();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dialog.open&&location.hash==='#garden')location.hash='home';});
   window.ZhishuGarden={
     enter(){syncFruits();render();},
