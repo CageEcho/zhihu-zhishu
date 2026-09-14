@@ -186,3 +186,34 @@ body[data-view="garden"] #view-garden{animation:none}
 #view-garden .g7{background:linear-gradient(180deg,#fff 0 48%,#f5f9f6 62%,#edf5ef 100%)}
 
 .g7.branches .leaf2{left:845px;top:181px}.g7.branches .leaf3{left:1010px;top:514px}
+
+/* Node frames use the color of the living structure they describe. */
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5){color:#5b4030;border-color:#9d7b63;background:#fffaf6f2;box-shadow:0 5px 18px #5a382617}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5) .dot{background:#72503a;box-shadow:0 0 0 4px #eee1d7}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5) small{color:#967e6d}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5):hover{border-color:#79543d;box-shadow:0 5px 20px #5a38262c}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5).active{color:#513524;border-color:#69452f;box-shadow:0 0 0 3px #ead9ccb8,0 7px 23px #51301f24}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5).active .dot{background:#5c3824;box-shadow:0 0 0 4px #e6d2c3}
+.g7 .node-tag:is(.root1,.root2,.root3,.root4,.root5) .arrow{color:#704b34}
+
+.g7 .node-tag:is(.branch1,.branch2,.branch3){color:#9a572c;border-color:#c98a59;background:#fff8f1f2;box-shadow:0 5px 18px #7e431d18}
+.g7 .node-tag:is(.branch1,.branch2,.branch3) .dot{background:#b86d38;box-shadow:0 0 0 4px #f4e4d5}
+.g7 .node-tag:is(.branch1,.branch2,.branch3) small{color:#b48160}
+.g7 .node-tag:is(.branch1,.branch2,.branch3):hover{border-color:#ae6533;box-shadow:0 5px 20px #7e431d2d}
+.g7 .node-tag:is(.branch1,.branch2,.branch3).active{color:#84461f;border-color:#a85b29;box-shadow:0 0 0 3px #f2d9c5bf,0 7px 23px #81421726}
+.g7 .node-tag:is(.branch1,.branch2,.branch3).active .dot{background:#a75b2b;box-shadow:0 0 0 4px #f0d8c6}
+.g7 .node-tag:is(.branch1,.branch2,.branch3) .arrow{color:#a55c2c}
+
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3){color:#527948;border-color:#8eb27f;background:#f7fbf4f2;box-shadow:0 5px 18px #496a3918}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3) .dot{background:#679454;box-shadow:0 0 0 4px #e4efdd}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3) small{color:#7e9d73}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3):hover{border-color:#6e9960;box-shadow:0 5px 20px #496a392c}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3).active{color:#426b38;border-color:#619152;box-shadow:0 0 0 3px #dcebd4c2,0 7px 23px #3f672d24}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3).active .dot{background:#568746;box-shadow:0 0 0 4px #dcebd4}
+.g7 .node-tag:is(.leaf1,.leaf2,.leaf3) .arrow{color:#5f8c50}
+
+.g7:is(.fruit,.published) .fruit-call{padding:13px 16px 12px 35px;border:1px solid #d28a83;border-radius:10px;background:#fff7f6f2;box-shadow:0 6px 20px #7d322a1b;color:#ad514b}
+.g7:is(.fruit,.published) .fruit-call:before{content:'';position:absolute;left:16px;top:20px;width:8px;height:8px;border-radius:50%;background:#be5a53;box-shadow:0 0 0 4px #f5dfdc}
+.g7:is(.fruit,.published) .fruit-call strong{color:#a74641}
+.g7:is(.fruit,.published) .fruit-call small{color:#b27670}
+.g7:is(.fruit,.published) .garden-fruit-archive{color:#ac514a;border-bottom-color:#dfaaa5}
