@@ -231,13 +231,13 @@ body[data-view="garden"] #view-garden{animation:none}
 
 /* Icon-only article guide: solid glowing gold disc, white focus brackets,
    pointer hand with click ripples. Matches the approved reference frame. */
-.g7 .article-guide-orb{position:absolute;left:720px;top:420px;width:164px;height:164px;z-index:9;padding:0;border:0;border-radius:50%;background:transparent;transform:translate(-50%,-50%);isolation:isolate}
+.g7 .article-guide-orb{position:absolute;left:720px;top:394px;width:164px;height:164px;z-index:9;padding:0;border:0;border-radius:50%;background:transparent;transform:translate(-50%,-50%);isolation:isolate}
 .g7 .article-guide-bloom{position:absolute;left:50%;top:50%;width:330px;height:330px;transform:translate(-50%,-50%);border-radius:50%;z-index:-2;pointer-events:none;background:radial-gradient(circle,#fff4c2d9 0,#ffe98ab8 22%,#ffe37a80 38%,#ffe07a3d 54%,#ffe07a00 72%);animation:article-guide-bloom 1.8s ease-in-out infinite}
 .g7 .article-guide-ring{position:absolute;inset:14px;border-radius:50%;z-index:0;background:radial-gradient(circle,#ffe58c00 56%,#ffd85e8c 64%,#f6bf33dd 72%,#e29e1f 84%,#f3c342 92%,#ffe9a1 100%);box-shadow:0 0 0 4px #fff3c880,0 0 26px 8px #ffd95fa8,0 0 60px 18px #ffe58c66;animation:article-guide-glow 1.8s ease-in-out infinite}
 .g7 .article-guide-core{position:absolute;inset:23px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 40% 32%,#fffdf3 0,#fff6d6 34%,#ffe9a4 66%,#fbd977 88%,#f3c85a 100%);box-shadow:inset 0 -8px 18px #e8b34a5c,inset 0 3px 6px #ffffffc4,0 2px 6px #c8931e40;transition:transform .18s ease}
 .g7 .article-guide-core:before{content:'';position:absolute;inset:6px;border:3px solid #f1bf3f;border-radius:50%;box-shadow:0 0 10px #f7cd5688,inset 0 0 14px #f6cb5a4d}
 .g7 .article-guide-scan{position:absolute;inset:15px;border:2px dashed #dfa62a;border-radius:50%;opacity:.9;animation:article-guide-spin 9s linear infinite}
-.g7 .article-guide-apple{position:relative;z-index:2;width:62px;height:62px;margin-top:5px;filter:drop-shadow(0 2px 3px #a56e1840)}
+.g7 .article-guide-apple{position:relative;z-index:2;width:62px;height:62px;margin-top:2px;filter:drop-shadow(0 2px 3px #a56e1840)}
 .g7 .article-guide-corner{position:absolute;width:26px;height:26px;z-index:3;filter:drop-shadow(0 0 4px #fff7d6) drop-shadow(0 0 8px #ffd96b9e)}
 .g7 .article-guide-corner.tl{left:0;top:0;border-left:3px solid #fff;border-top:3px solid #fff}
 .g7 .article-guide-corner.tr{right:0;top:0;border-right:3px solid #fff;border-top:3px solid #fff}
@@ -254,4 +254,4 @@ body[data-view="garden"] #view-garden{animation:none}
 @keyframes article-guide-ripple{0%,38%{opacity:0;transform:scale(.3)}46%{opacity:.95;transform:scale(.55)}100%{opacity:0;transform:scale(1.35)}}
 @keyframes article-guide-spin{to{transform:rotate(360deg)}}
 @keyframes article-guide-hand{0%,30%,70%,100%{transform:translate(3px,4px) scale(1)}43%,52%{transform:translate(-3px,-3px) scale(.9)}}
-@media(max-width:700px){.g7 .article-guide-orb{left:720px;top:430px;transform:translate(-50%,-50%) scale(.9)}}
+@media(max-width:700px){.g7 .article-guide-orb{left:720px;top:404px;transform:translate(-50%,-50%) scale(.9)}}
