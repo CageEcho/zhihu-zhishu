@@ -137,6 +137,7 @@
     if(action==='all-roots')open('全部收藏根系',`<div class="garden-fruit-list">${garden.sources.map((source,i)=>`<button data-garden-action="root" data-index="${i}"><span>根系 ${i+1}</span><b>${esc(source.title)}</b></button>`).join('')}</div>`,'sources');
     if(action==='branch')openRound(index);
     if(action==='leaf')openLeaf(index);
+    if(action==='article-guide'){button.classList.add('is-pressing');setTimeout(()=>openLeaf(0),180);}
     if(action==='article')openArticle();
     if(action==='generate'||action==='new-article')startArticle();
     if(action==='fruit'||action==='harvest')openFruit(button.dataset.id);
