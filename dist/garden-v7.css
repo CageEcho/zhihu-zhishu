@@ -182,10 +182,7 @@ body[data-view="garden"]>.header{display:none}body[data-view="garden"] main{heig
    frame from inheriting the generic page slide-in offset. */
 body[data-view="garden"] #view-garden{animation:none}
 
-/* The pale landscape belongs to the viewport, not the scaled 1440px stage.
-   Oversized ellipses keep both bottom corners filled on every aspect ratio. */
-#view-garden:before{content:'';position:absolute;z-index:0;left:-20vw;bottom:-10vh;width:140vw;height:38vh;border:1px solid #dfeae2;border-radius:50%;background:linear-gradient(180deg,#f5faf7 0%,#edf5ef 72%,#e9f2eb 100%);pointer-events:none}
-#view-garden:after{content:'';position:absolute;z-index:0;left:-24vw;bottom:-9vh;width:148vw;height:32vh;border:1px solid #dce8df80;border-radius:50%;pointer-events:none}
-#view-garden .g7{background:transparent}
+/* The pale landscape fills the full viewport without an ellipse or side gaps. */
+#view-garden .g7{background:linear-gradient(180deg,#fff 0 48%,#f5f9f6 62%,#edf5ef 100%)}
 
 .g7.branches .leaf2{left:845px;top:181px}.g7.branches .leaf3{left:1010px;top:514px}
