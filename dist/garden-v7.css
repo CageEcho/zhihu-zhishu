@@ -229,31 +229,18 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7.growing .answer-canopy{animation:g7-canopy-bloom .72s cubic-bezier(.18,.88,.28,1) both}
 @keyframes g7-canopy-bloom{0%{opacity:0;transform:scale(.72) translateY(18px);filter:saturate(.72) drop-shadow(0 2px 3px #36582512)}65%{opacity:1;transform:scale(1.035) translateY(-2px);filter:saturate(1.08) drop-shadow(0 12px 15px #36582536)}100%{opacity:1;transform:none;filter:drop-shadow(0 10px 12px #36582530)}}
 
-/* Icon-only article guide: solid glowing gold disc, white focus brackets,
-   pointer hand with click ripples. Matches the approved reference frame. */
-.g7 .article-guide-orb{position:absolute;left:720px;top:394px;width:164px;height:164px;z-index:9;padding:0;border:0;border-radius:50%;background:transparent;transform:translate(-50%,-50%);isolation:isolate}
-.g7 .article-guide-bloom{position:absolute;left:50%;top:50%;width:330px;height:330px;transform:translate(-50%,-50%);border-radius:50%;z-index:-2;pointer-events:none;background:radial-gradient(circle,#fff4c2d9 0,#ffe98ab8 22%,#ffe37a80 38%,#ffe07a3d 54%,#ffe07a00 72%);animation:article-guide-bloom 1.8s ease-in-out infinite}
-.g7 .article-guide-ring{position:absolute;inset:14px;border-radius:50%;z-index:0;background:radial-gradient(circle,#ffe58c00 56%,#ffd85e8c 64%,#f6bf33dd 72%,#e29e1f 84%,#f3c342 92%,#ffe9a1 100%);box-shadow:0 0 0 4px #fff3c880,0 0 26px 8px #ffd95fa8,0 0 60px 18px #ffe58c66;animation:article-guide-glow 1.8s ease-in-out infinite}
-.g7 .article-guide-core{position:absolute;inset:23px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 40% 32%,#fffdf3 0,#fff6d6 34%,#ffe9a4 66%,#fbd977 88%,#f3c85a 100%);box-shadow:inset 0 -8px 18px #e8b34a5c,inset 0 3px 6px #ffffffc4,0 2px 6px #c8931e40;transition:transform .18s ease}
-.g7 .article-guide-core:before{content:'';position:absolute;inset:6px;border:3px solid #f1bf3f;border-radius:50%;box-shadow:0 0 10px #f7cd5688,inset 0 0 14px #f6cb5a4d}
-.g7 .article-guide-scan{position:absolute;inset:15px;border:2px dashed #dfa62a;border-radius:50%;opacity:.9;animation:article-guide-spin 9s linear infinite}
-.g7 .article-guide-apple{position:relative;z-index:2;width:62px;height:62px;margin-top:2px;filter:drop-shadow(0 2px 3px #a56e1840)}
-.g7 .article-guide-corner{position:absolute;width:26px;height:26px;z-index:3;filter:drop-shadow(0 0 4px #fff7d6) drop-shadow(0 0 8px #ffd96b9e)}
-.g7 .article-guide-corner.tl{left:0;top:0;border-left:3px solid #fff;border-top:3px solid #fff}
-.g7 .article-guide-corner.tr{right:0;top:0;border-right:3px solid #fff;border-top:3px solid #fff}
-.g7 .article-guide-corner.bl{left:0;bottom:0;border-left:3px solid #fff;border-bottom:3px solid #fff}
-.g7 .article-guide-corner.br{right:0;bottom:0;border-right:3px solid #fff;border-bottom:3px solid #fff}
-.g7 .article-guide-hand{position:absolute;left:112px;top:106px;width:44px;height:52px;z-index:5;animation:article-guide-hand 2.1s ease-in-out infinite;filter:drop-shadow(0 3px 4px #5a44163d)}
-.g7 .article-guide-hand svg{position:relative;z-index:2;width:100%;height:100%;fill:#fff;stroke:#5e4a26;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.g7 .article-guide-hand i{position:absolute;left:19px;top:5px;width:66px;height:66px;margin:-33px 0 0 -33px;border:2.5px solid #ffd757;border-radius:50%;opacity:0;z-index:1;box-shadow:0 0 12px #ffd75780,inset 0 0 10px #ffe38a55;animation:article-guide-ripple 2.1s ease-out infinite}
-.g7 .article-guide-hand i.w2{animation-delay:.35s}
-.g7 .article-guide-orb:hover .article-guide-core{transform:scale(1.04)}
+/* Article guide (option A): a small gold disc with a strong breathing glow and two faint expanding rings. */
+.g7 .article-guide-orb{position:absolute;left:720px;top:394px;width:96px;height:96px;z-index:9;padding:0;border:0;border-radius:50%;background:transparent;transform:translate(-50%,-50%);isolation:isolate}
+.g7 .article-guide-bloom{position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;background:radial-gradient(circle,#fff3c4e6 0,#ffe68ac0 24%,#ffe07a78 42%,#ffe07a2e 60%,#ffe07a00 76%);animation:article-guide-bloom 2.2s ease-in-out infinite}
+.g7 .article-guide-ring{position:absolute;left:50%;top:50%;width:96px;height:96px;transform:translate(-50%,-50%);border:2px solid #f2c443;border-radius:50%;pointer-events:none;opacity:0;animation:article-guide-ring 2.2s ease-out infinite}
+.g7 .article-guide-ring.r2{animation-delay:1.1s;border-width:1.5px}
+.g7 .article-guide-core{position:absolute;inset:5px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 40% 32%,#fffdf3 0,#fff6d6 36%,#ffe9a4 70%,#f6cf62 100%);box-shadow:0 0 0 4px #ffffffd8,0 0 0 8px #f5c84a,0 0 26px 10px #ffd95f99,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4;transition:transform .18s ease;animation:article-guide-core 2.2s ease-in-out infinite}
+.g7 .article-guide-apple{width:46px;height:46px;margin-top:2px;filter:drop-shadow(0 2px 3px #a56e1840)}
+.g7 .article-guide-orb:hover .article-guide-core{transform:scale(1.06)}
 .g7 .article-guide-orb.is-pressing .article-guide-core{transform:scale(.9)}
-@keyframes article-guide-bloom{0%,100%{opacity:.82;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}}
-@keyframes article-guide-glow{0%,100%{box-shadow:0 0 0 4px #fff3c880,0 0 22px 6px #ffd95f99,0 0 52px 16px #ffe58c55}50%{box-shadow:0 0 0 4px #fff7d8a8,0 0 34px 10px #ffd95fcc,0 0 78px 26px #ffe58c80}}
-@keyframes article-guide-ripple{0%,38%{opacity:0;transform:scale(.3)}46%{opacity:.95;transform:scale(.55)}100%{opacity:0;transform:scale(1.35)}}
-@keyframes article-guide-spin{to{transform:rotate(360deg)}}
-@keyframes article-guide-hand{0%,30%,70%,100%{transform:translate(3px,4px) scale(1)}43%,52%{transform:translate(-3px,-3px) scale(.9)}}
+@keyframes article-guide-bloom{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.78)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes article-guide-core{0%,100%{box-shadow:0 0 0 4px #ffffffd8,0 0 0 8px #f5c84a,0 0 18px 6px #ffd95f80,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4}50%{box-shadow:0 0 0 4px #fffaf0,0 0 0 8px #ffd257,0 0 44px 18px #ffd95fd0,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffd8}}
+@keyframes article-guide-ring{0%{opacity:.7;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.3)}}
 @media(max-width:700px){.g7 .article-guide-orb{left:720px;top:404px;transform:translate(-50%,-50%) scale(.9)}}
 /* Soil + roots are one fixed layer from the roots stage onward; trees stand on it without their own soil. */
 .g7 .soil-art,.g7 .seed-art{position:absolute;left:360px;top:109px;width:720px;height:720px;object-fit:contain;clip-path:inset(64% 0 0);z-index:1;pointer-events:none;filter:brightness(1.025) contrast(1.035)}
