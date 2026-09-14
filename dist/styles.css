@@ -48,3 +48,18 @@ body[data-view="garden"]>.header{display:none}body[data-view="garden"] main{heig
 
 /* Header profile icon: colourful sprouting tree in a soft ring. */
 .user-button{display:grid;place-items:center;padding:0;border:0;background:transparent;box-shadow:none;border-radius:8px;transition:transform .18s ease}.user-button:before,.user-button:after{display:none}.user-button svg{width:30px;height:30px;margin:0}.user-button:hover{border-color:transparent;box-shadow:none;transform:scale(1.08)}.user-button:hover{border-color:#9cc394;box-shadow:0 3px 12px #3f6b3a22}
+/* Homepage legend v2: dots anchored on the tree, alternating left/right, label cards with a short leader. */
+@media(min-width:821px){
+.tree-hotspot{width:30px!important;height:30px!important;padding:0!important;gap:0!important;display:grid!important;place-items:center;border-radius:50%;transform:translate(-50%,-50%)!important;overflow:visible}
+.tree-hotspot i{margin:0}
+.tree-hotspot b{position:absolute;top:50%;left:100%;margin-left:12px;transform:translate(-6px,-50%);text-align:left!important;padding:7px 11px;border-radius:9px;background:#fff;border:1px solid var(--hotspot-border);box-shadow:0 8px 22px #2b476618;font-size:12px;line-height:1.35}
+.tree-hotspot b:before{content:'';position:absolute;top:50%;left:-16px;width:15px;height:1.5px;background:var(--hotspot-border)}
+.tree-hotspot em{font-size:10px;margin-top:1px}
+.tree-hotspot.flip b{left:auto;right:100%;margin-left:0;margin-right:12px;text-align:right!important;transform:translate(6px,-50%)}
+.tree-hotspot.flip b:before{left:auto;right:-16px}
+.tree-hotspot:hover b,.tree-hotspot:focus-visible b,.tree-hotspot[aria-pressed=true] b{transform:translate(0,-50%)}
+.fruit-hotspot{left:60%!important;top:23%!important}
+.leaf-hotspot{left:43.5%!important;top:39%!important}
+.trunk-hotspot{left:55.5%!important;top:60%!important}
+.root-hotspot{left:45%!important;top:86%!important}
+}
