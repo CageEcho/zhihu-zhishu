@@ -19,7 +19,7 @@ await page.goto("http://127.0.0.1:4201/#home");
 const nav = await page.evaluate(() =>
   [...document.querySelectorAll(".header nav a")].map((link) => link.textContent.trim()),
 );
-if (JSON.stringify(nav) !== JSON.stringify(["我的知树", "历史记录", "同题树林"])) {
+if (JSON.stringify(nav) !== JSON.stringify(["我的知树", "历史树轮", "同题树林"])) {
   throw new Error(`Navigation mismatch: ${JSON.stringify(nav)}`);
 }
 
@@ -183,7 +183,7 @@ const result = {
   passed: true,
   checkedAt: new Date().toISOString(),
   checks: [
-    "导航仅保留我的知树、历史记录、同题树林",
+    "导航仅保留我的知树、历史树轮、同题树林",
     "全流程只通过种子、根系、枝干、树叶、果实推进",
     "文章确认前不结果",
     "发布后留在原树并显示已采摘标记",
@@ -191,7 +191,7 @@ const result = {
     "本次演示内保留文章草稿和已发布果实",
     "刷新后清空树、收藏、草稿和发布状态",
     "无论刷新前停在哪一页，都从首页重新开始",
-    "收藏来源进入历史记录",
+    "收藏来源进入历史树轮",
     "直接打开任意旧地址也回到全新首页",
     "1545 × 710 宽屏下白色画布、导航和底部状态栏全部通栏",
   ],

@@ -251,7 +251,7 @@
       toast('这棵树已经在你的根系里。');
       return;
     }
-    showDialog(stageOf(post).rank === 3 ? '把这颗果实采集为根系？' : '把这棵树采集为根系？', `<p>采集后会保留${stageOf(post).rank === 3 ? '文章卡' : '这棵树的观点与来源'}、作者、采集时间和上游来源链，保留在“历史记录”的收藏来源里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
+    showDialog(stageOf(post).rank === 3 ? '把这颗果实采集为根系？' : '把这棵树采集为根系？', `<p>采集后会保留${stageOf(post).rank === 3 ? '文章卡' : '这棵树的观点与来源'}、作者、采集时间和上游来源链，保留在“历史树轮”的收藏来源里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
   }
 
   function markdown(work) {
@@ -294,12 +294,12 @@
     if(view==='topic')renderTopic(currentTopic);
     if(view==='forest')renderForest();
     syncNavCounts();
-    document.title={home:'知树 · 让思考自然生长',garden:'我的知树 · 知树',history:'历史记录 · 知树',forest:'同题树林 · 知树',topic:`${currentTopic.short} · 知树`}[view];
+    document.title={home:'知树 · 让思考自然生长',garden:'我的知树 · 知树',history:'历史树轮 · 知树',forest:'同题树林 · 知树',topic:`${currentTopic.short} · 知树`}[view];
     if(currentView!==view){window.scrollTo({top:0,behavior:'instant'});if(currentView)$('#main').focus({preventScroll:true});}
     currentView=view;
   }
   const actions = {
-    about:()=>showDialog('关于这次生长',`<p>在“我的知树”里点击种子、根系、枝干、树叶和果实，完成一篇文章；历史记录保留本次演示中整棵树的进度，同题树林用于阅读和交流。</p><p>这是本地演示：重新打开或刷新页面时，收藏、对话、历史记录和发布状态都会清空，从新的种子开始。文章使用本地结构整理，不会调用在线 AI 或自动读取私人收藏夹。</p><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    about:()=>showDialog('关于这次生长',`<p>在“我的知树”里点击种子、根系、枝干、树叶和果实，完成一篇文章；历史树轮保留本次演示中整棵树的进度，同题树林用于阅读和交流。</p><p>这是本地演示：重新打开或刷新页面时，收藏、对话、历史树轮和发布状态都会清空，从新的种子开始。文章使用本地结构整理，不会调用在线 AI 或自动读取私人收藏夹。</p><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
     'close-dialog':closeDialog,
     'start-user-tree':()=>{location.hash='garden';},
     'new-tree':()=>window.ZhishuGarden?.newTree(),
