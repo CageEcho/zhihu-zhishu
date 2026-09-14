@@ -8,13 +8,14 @@
   <title>知树 · 让收藏长成自己的观点</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230667ff'/%3E%3Ctext x='9' y='47' font-size='43' fill='white'%3E知%3C/text%3E%3C/svg%3E">
   <link rel="preload" as="image" href="assets/tree-full.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/tree-fruit-red.png">
+  <link rel="stylesheet" href="styles.css?v=23">
   <link rel="stylesheet" href="garden-v7.css">
   <link rel="stylesheet" href="navigation-v8.css">
   <script src="demo-reset.js" defer></script>
   <script src="data.js" defer></script>
   <script src="tree-store.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=23" defer></script>
   <script src="garden-scene.js" defer></script>
   <script src="history.js" defer></script>
   <script src="garden.js" defer></script>
@@ -40,10 +41,10 @@
         </div>
         <div class="hero-tree" aria-label="知识树成长含义示意">
           <div class="tree-scene-title"><span class="source-pulse"></span>思考生长示例 <small>点击圆点查看含义</small></div>
-          <img src="assets/tree-fruit.png" alt="根系、树干、枝叶完整并结出金色果实的知识树">
+          <img src="assets/tree-fruit-red.png" alt="根系、树干、树叶完整并结出红苹果的知识树">
           <button class="tree-hotspot root-hotspot" data-action="tree-note" data-note="root" aria-pressed="false"><i></i><b>根系<em>收藏内容</em></b></button>
           <button class="tree-hotspot trunk-hotspot" data-action="tree-note" data-note="trunk" aria-pressed="false"><i></i><b>树干<em>主要观点</em></b></button>
-          <button class="tree-hotspot leaf-hotspot" data-action="tree-note" data-note="leaf" aria-pressed="false"><i></i><b>枝叶<em>多轮对话</em></b></button>
+          <button class="tree-hotspot leaf-hotspot" data-action="tree-note" data-note="leaf" aria-pressed="false"><i></i><b>树叶<em>多轮对话</em></b></button>
           <button class="tree-hotspot fruit-hotspot" data-action="tree-note" data-note="fruit" aria-pressed="false"><i></i><b>果实<em>写出的文章</em></b></button>
           <div id="tree-note" class="tree-note" hidden><strong id="tree-note-title"></strong><p id="tree-note-copy"></p></div>
         </div>
