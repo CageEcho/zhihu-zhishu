@@ -34,7 +34,7 @@ const defs=`<defs>
 <filter id="smallshadow" x="-.8" y="-.8" width="2.6" height="2.6"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#54612c" flood-opacity=".2"/></filter>
 <filter id="glow" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="7"/></filter>
 </defs>`;
-const CANOPY_LAYERS=[["left", 391.6, 275.5, 350.2, 294.0], ["top", 572.4, 141.7, 268.7, 200.4], ["right", 730.3, 217.5, 346.2, 364.0]];
+const CANOPY_LAYERS=[["left", 391.6, 275.5, 350.2, 294.0], ["top", 572.4, 141.7, 363.4, 290.5], ["right", 792.9, 268.6, 283.6, 312.9]];
 function canopyCluster(index){const [name,x,y,w,h]=CANOPY_LAYERS[index];return `<g class="answer-canopy-layer answer-canopy-layer-${index+1}"><image class="answer-canopy" href="assets/canopy-${name}.png" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/></g>`;}
 function canopyLayers(answers){return [0,1,2].map(i=>answers[i]?.trim()?canopyCluster(i):'').join('');}
 function fruit(x,y,scale=1){return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cy="6" rx="59" ry="58" fill="url(#fruitHalo)"/><path d="M0-34q-2-18 8-29" stroke="#80532e" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M4-52q28-23 41-2q-23 14-41 2Z" fill="url(#leafGreen)"/><path d="M0-35C-12-48-34-48-43-29C-55-7-43 29-19 45C-11 51-4 49 0 46C5 49 12 51 20 45C44 29 55-7 43-29C34-48 12-48 0-35Z" fill="url(#fruitRed)" stroke="#f47b6d" stroke-width="1.2" filter="url(#smallshadow)"/><ellipse cx="-20" cy="-9" rx="8" ry="15" fill="#ffd2c8" opacity=".58" transform="rotate(22)"/><path d="M-37 15Q-28 39-9 44" fill="none" stroke="#ff8c7c" stroke-width="2" opacity=".22"/></g>`;}
