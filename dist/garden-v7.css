@@ -217,3 +217,8 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7:is(.fruit,.published) .fruit-call strong{color:#a74641}
 .g7:is(.fruit,.published) .fruit-call small{color:#b27670}
 .g7:is(.fruit,.published) .garden-fruit-archive{color:#ac514a;border-bottom-color:#dfaaa5}
+
+/* Keep fruit representations consistent with the red apple on the tree. */
+.g7 .fruit-symbol,#garden-dialog .garden-golden-fruit{width:64px;height:58px;margin-top:10px;border-radius:48% 48% 45% 45%/42% 42% 56% 56%;background:radial-gradient(circle at 27% 23%,#ffab98 0,#ef5a4b 31%,#cf3032 68%,#901d27 100%);box-shadow:inset -7px -8px 13px #74152145,0 7px 15px #8f20262b;position:relative;transform:none}
+.g7 .fruit-symbol:before,#garden-dialog .garden-golden-fruit:before{content:'';position:absolute;left:31px;top:-15px;width:5px;height:19px;border-radius:4px;background:#80532e;transform:rotate(13deg)}
+.g7 .fruit-symbol:after,#garden-dialog .garden-golden-fruit:after{content:'';position:absolute;left:34px;top:-10px;width:26px;height:13px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#a8ca5c,#5e8b38);transform:rotate(-20deg)}
