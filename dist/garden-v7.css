@@ -255,3 +255,7 @@ body[data-view="garden"] #view-garden{animation:none}
 @keyframes article-guide-spin{to{transform:rotate(360deg)}}
 @keyframes article-guide-hand{0%,30%,70%,100%{transform:translate(3px,4px) scale(1)}43%,52%{transform:translate(-3px,-3px) scale(.9)}}
 @media(max-width:700px){.g7 .article-guide-orb{left:720px;top:404px;transform:translate(-50%,-50%) scale(.9)}}
+/* Roots stage: tapered root strands grow from the seed into the shared soil. */
+.g7 .root-system{filter:drop-shadow(0 1px 1px #2b1b0c33)}
+.g7.growing .root-system{animation:g7-root-grow 1s cubic-bezier(.3,.7,.3,1) both}
+@keyframes g7-root-grow{from{clip-path:inset(0 0 100% 0);opacity:.4}to{clip-path:inset(-20px 0 0 0);opacity:1}}
