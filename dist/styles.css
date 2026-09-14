@@ -63,3 +63,6 @@ body[data-view="garden"]>.header{display:none}body[data-view="garden"] main{heig
 .trunk-hotspot{left:55.5%!important;top:60%!important}
 .root-hotspot{left:45%!important;top:86%!important}
 }
+
+/* Shown only inside WeChat's in-app browser. */
+.wechat-hint{position:fixed;left:12px;right:12px;top:12px;z-index:9999;display:flex;align-items:flex-start;gap:10px;padding:12px 40px 12px 14px;border-radius:12px;background:#1f3550;color:#fff;font-size:13px;line-height:1.5;box-shadow:0 10px 30px #0006}.wechat-hint b{flex:none;font-weight:600}.wechat-hint span{color:#dbe6f3}.wechat-hint button{position:absolute;right:8px;top:6px;width:28px;height:28px;border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer}

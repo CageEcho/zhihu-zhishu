@@ -16,10 +16,11 @@
   <link rel="preload" as="image" href="assets/canopy-top.png">
   <link rel="preload" as="image" href="assets/canopy-right.png">
   <link rel="preload" as="image" href="assets/roots-overlay.png">
-  <link rel="stylesheet" href="styles.css?v=32">
+  <link rel="stylesheet" href="styles.css?v=33">
   <link rel="stylesheet" href="garden-v7.css?v=50">
   <link rel="stylesheet" href="navigation-v8.css">
   <link rel="stylesheet" href="forest-v9.css?v=3">
+  <script>(function(){try{if(/MicroMessenger/i.test(navigator.userAgent)){document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("wechat-hint");if(e){e.hidden=false;e.querySelector("button").onclick=function(){e.hidden=true;};}});}}catch(e){}})();</script>
   <script src="demo-reset.js" defer></script>
   <script src="data.js" defer></script>
   <script src="tree-store.js" defer></script>
@@ -30,6 +31,7 @@
 </head>
 <body>
   <a class="skip" href="#main">跳到主要内容</a>
+  <div id="wechat-hint" class="wechat-hint" hidden><b>微信内可能无法正常显示</b><span>请点右上角「···」选择「在浏览器打开」，或复制链接到 Safari / Chrome 打开。</span><button type="button" data-action="dismiss-wechat-hint" aria-label="关闭提示">×</button></div>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="sproutKey" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1.10 0 0 0 0  0 1.14 0 0 0  0 0 1.18 0 0  0 0 0 1 0"/></filter></svg>
   <header class="header">
     <a class="brand" href="#home" aria-label="知树首页">知树<span></span></a>

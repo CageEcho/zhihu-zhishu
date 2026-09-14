@@ -22,6 +22,10 @@
 
 **🌐 https://s4un71nck60neho2ichmh.apigateway-cn-beijing.volceapi.com/**
 
+<p align="center"><img src="docs/qrcode.png" alt="体验二维码" width="220"></p>
+
+> 微信内置浏览器会拦截这类云网关默认域名，打开时请点右上角「···」选择「在浏览器打开」，或用手机相机 / 浏览器扫码。
+
 部署在火山引擎函数服务 veFaaS（华北 2 · 北京），以静态站点方式托管 `dist/` 目录，通过 Serverless API 网关提供 HTTPS 访问。无需登录，打开即用；所有演示数据只保存在你的浏览器里。
 
 ### 重新部署
