@@ -259,3 +259,6 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7 .root-system{filter:drop-shadow(0 1px 1px #2b1b0c33)}
 .g7.growing .root-system{animation:g7-root-grow 1s cubic-bezier(.3,.7,.3,1) both}
 @keyframes g7-root-grow{from{clip-path:inset(0 0 100% 0);opacity:.4}to{clip-path:inset(-20px 0 0 0);opacity:1}}
+/* Centered stage copy: offset the full-width closing punctuation so the ink, not the box, is centered. */
+.g7 .intro.central h1{padding-left:1.05em}.g7 .intro.central p{padding-left:1em}
+.g7 .intro.central .stage-note,.g7 .intro.central p[style]{padding-left:0}
