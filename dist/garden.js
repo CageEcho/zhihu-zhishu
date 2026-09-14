@@ -27,7 +27,7 @@
   }
   function render(animate=false){
     syncFruits();window.renderZhishuGarden(garden,world);fit();
-    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);const sprout=world.classList.contains('sprout');const hold=sprout?2150:1050;const art=world.querySelector('.tree-art');if(sprout&&art){art.addEventListener('animationstart',()=>{clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),hold);},{once:true});growTimer=setTimeout(()=>world.classList.remove('growing'),hold+2500);}else growTimer=setTimeout(()=>world.classList.remove('growing'),hold);}
+    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);const sprout=world.classList.contains('sprout');const video=world.querySelector('.sprout-video');if(sprout&&video){let settleTimer=0;const settle=()=>{world.classList.add('sprout-settle');};const arm=()=>{clearTimeout(settleTimer);const left=Math.max(0,3.4-video.currentTime)*1000;settleTimer=setTimeout(settle,left);};video.addEventListener('playing',arm);video.addEventListener('timeupdate',()=>{if(video.currentTime>=3.4)settle();});const finish=()=>{clearTimeout(settleTimer);settle();world.classList.add('sprout-done');clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),900);};video.addEventListener('ended',finish,{once:true});video.addEventListener('error',finish,{once:true});video.play?.().catch(finish);growTimer=setTimeout(finish,6500);}else growTimer=setTimeout(()=>world.classList.remove('growing'),1050);}
     persist();
   }
   function open(title,html,type){

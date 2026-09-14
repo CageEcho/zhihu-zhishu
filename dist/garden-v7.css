@@ -265,11 +265,16 @@ body[data-view="garden"] #view-garden{animation:none}
 /* Stage-tinted hover halos for root and branch hit areas. */
 .g7.roots .g7-hit:hover{box-shadow:0 0 0 2px #b39a8955,0 0 24px #e3d5c866}
 .g7.branches .g7-hit[data-garden-action="branch"]:hover{box-shadow:0 0 0 2px #d2a07d66,0 0 24px #f2dfd177}
-/* Branches stage entrance: the soil settles first, then the trunk and branches grow upward, then the cards arrive. */
-.g7.sprout .tree-art{transform-origin:50% 92%;animation:g7-tree-grow 1.7s cubic-bezier(.22,.8,.3,1) both}
-@keyframes g7-tree-grow{0%{opacity:0;clip-path:inset(100% 0 0);transform:translateY(14px) scale(.9)}16%{opacity:1;clip-path:inset(76% 0 0);transform:translateY(6px) scale(.94)}52%{clip-path:inset(42% 0 0);transform:translateY(2px) scale(.985)}82%{clip-path:inset(10% 0 0);transform:translateY(0) scale(1.01)}100%{clip-path:inset(-4% 0 0);transform:none}}
-.g7.sprout .scene-svg,.g7.sprout .node-tag,.g7.sprout .g7-hit,.g7.sprout .garden-root-overflow{animation:g7-tags-in .55s ease both 1.45s}
+/* Branches stage entrance: play the seed -> sprout -> trunk clip in place; the clip's own progress drives the hand-off to the bare tree art. */
+.g7 .sprout-video{position:absolute;left:122px;top:138px;width:1220px;height:686px;z-index:2;pointer-events:none;object-fit:fill;mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 54% 60% at 50% 56%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 54% 60% at 50% 56%,#000 58%,transparent 100%);opacity:1;transition:opacity .6s ease}
+.g7.sprout-done .sprout-video{opacity:0}
+.g7:not(.growing) .sprout-video{display:none}
+.g7.sprout .tree-art{animation:none!important;opacity:0;transition:opacity .7s ease}
+.g7.sprout.sprout-settle .tree-art{opacity:1}
+.g7.sprout .scene-svg,.g7.sprout .node-tag,.g7.sprout .g7-hit,.g7.sprout .garden-root-overflow{animation:none!important;opacity:0;transform:translateY(8px);transition:opacity .55s ease .45s,transform .55s ease .45s}
+.g7.sprout.sprout-settle .scene-svg,.g7.sprout.sprout-settle .node-tag,.g7.sprout.sprout-settle .g7-hit,.g7.sprout.sprout-settle .garden-root-overflow{opacity:1;transform:none}
 @keyframes g7-tags-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.g7 .sprout-video{display:none}.g7.sprout .tree-art,.g7.sprout .scene-svg,.g7.sprout .node-tag,.g7.sprout .g7-hit{opacity:1!important;transform:none!important}}
 /* Canopy clusters are cut from the final canopy art and sit at their original positions; the 3/3 -> leaves switch crossfades. */
 .g7 .canopy-ghost{position:absolute;inset:0;z-index:2;pointer-events:none;animation:g7-ghost-out .9s ease both}
 .g7 .canopy-ghost .tree-art{animation:none!important;filter:none}
