@@ -1,5 +1,5 @@
 /* Forest v9: one shared grove where every tree is a person, distinguished by growth stage. */
-.forest-view{max-width:1440px;width:100%;margin:0 auto;padding:18px 4.5% 22px!important;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.forest-view{max-width:1440px;width:100%;margin:0 auto;padding:18px 4.5% 28px!important;display:flex;flex-direction:column;gap:14px;overflow:hidden auto!important;height:100%;scrollbar-gutter:stable}
 .forest-top{display:flex;align-items:flex-start;justify-content:space-between;gap:36px;flex:none}
 .forest-intro .eyebrow{font-size:13px;color:var(--blue);font-weight:600;display:flex;align-items:center;gap:8px}
 .forest-intro .eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block}
@@ -13,7 +13,7 @@
 .forest-view .forest-topic-tabs button span{color:#a8b5c5;font-size:11px}
 .forest-view .forest-topic-tabs button.active{border-color:var(--blue);color:var(--blue);background:#eef4ff}
 .forest-view .forest-topic-tabs button.active span{color:var(--blue)}
-.forest-grove{position:relative;flex:none;height:284px;border-radius:18px;overflow:hidden;border:1px solid #e3ebf3;background:linear-gradient(180deg,#f7fbff 0%,#f4faf3 70%,#e6f2df 100%)}
+.forest-grove{position:relative;flex:none;height:292px;border-radius:18px;overflow:hidden;border:1px solid #e3ebf3;background:linear-gradient(180deg,#f7fbff 0%,#f4faf3 70%,#e6f2df 100%)}
 .grove-ground{position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(180deg,#cfe6b8 0,#b8d79c 40%,#a4c88a 100%)}
 .grove-ground:before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:#dcefc9}
 .grove-hint{position:absolute;left:18px;top:12px;font-size:12px;color:#8a9aae;display:flex;align-items:center;gap:8px;z-index:2}
@@ -45,8 +45,8 @@
 .grove-tree.placeholder{justify-content:flex-end}
 .grove-empty{width:180px;height:150px;border:1.5px dashed #b9c9dc;border-radius:16px;background:#ffffffb8;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:12px;margin-bottom:12px}
 .grove-empty b{font-size:13px;color:#4c5e73}.grove-empty small{font-size:11px;color:#8d9bad;line-height:1.5}.grove-empty em{font-style:normal;font-size:12px;color:var(--blue);font-weight:600;margin-top:4px}
-.forest-bottom{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;flex:1;min-height:0}
-.forest-detail{border:1.5px solid #cfe0ff;border-radius:18px;padding:16px 24px;background:#fff;box-shadow:0 12px 34px #0768fa12;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.forest-bottom{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;flex:none;align-items:start}
+.forest-detail{border:1.5px solid #cfe0ff;border-radius:18px;padding:18px 24px 20px;background:#fff;box-shadow:0 12px 34px #0768fa12;display:flex;flex-direction:column;min-height:300px}
 .forest-detail-empty{color:#8d9bad;font-size:14px}
 .detail-head{display:flex;align-items:center;gap:12px}
 .detail-head .friend-avatar{width:38px;height:38px;font-size:15px}
@@ -58,7 +58,7 @@
 .detail-roots span{font-size:12px;padding:5px 10px;border-radius:8px;background:#f5efe8;color:#7a5a3d;border:1px solid #ecdfd2}
 .detail-roots span:before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#8a6a4a;margin-right:6px}
 .detail-roots span.more{background:#fff;color:#a5b2c2;border-style:dashed}
-.detail-stats{display:flex;gap:22px;margin-top:auto;padding-top:10px;border-top:1px solid #eef2f6;font-size:12px;color:#8d9bad;align-items:baseline}
+.detail-stats{display:flex;gap:22px;margin-top:16px;padding-top:12px;border-top:1px solid #eef2f6;font-size:12px;color:#8d9bad;align-items:baseline}
 .detail-stats b{color:#243b4e;font-size:16px;font-weight:650;margin-right:4px}
 .detail-stats .ok{margin-left:auto;color:#4f9349;font-weight:600}
 .detail-actions{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap}
@@ -70,7 +70,7 @@
 .detail-actions .btn.collect{color:#7a5a3d;border-color:#e6d5c4;background:#fbf6f1}
 .detail-actions .btn.done{color:#4f9349;border-color:#cfe3cc;background:#f2f9f0}
 .detail-actions .own-note{font-size:12px;color:#8d9bad;margin-left:4px}
-.forest-view .forest-guide{position:static;border:1px solid var(--line);border-radius:18px;padding:16px 22px;background:#fbfcfe;display:block;min-height:0;overflow:hidden}
+.forest-view .forest-guide{position:static;border:1px solid var(--line);border-radius:18px;padding:16px 22px;background:#fbfcfe;display:block}
 .forest-view .forest-guide>h2{font-size:15px;margin:0 0 4px;line-height:1.4}
 .forest-guide-lead{font-size:12px;color:#8d9bad;margin:0 0 10px}
 .forest-view .forest-rule{display:flex;gap:12px;padding:9px 0;margin:0;border-top:1px solid #eef2f6}
@@ -83,4 +83,4 @@
 .forest-view .friend-avatar.near{background:#fdeceb;color:#c8443c}.forest-view .friend-avatar.dissent{background:#fdeee1;color:#e0863a}.forest-view .friend-avatar.add{background:#fbf3d6;color:#b58f14}.forest-view .friend-avatar.mine{background:#eaf2ff;color:var(--blue)}#dialog .friend-avatar.near{background:#fdeceb;color:#c8443c}#dialog .friend-avatar.dissent{background:#fdeee1;color:#e0863a}#dialog .friend-avatar.add{background:#fbf3d6;color:#b58f14}#dialog .friend-avatar.mine{background:#eaf2ff;color:var(--blue)}
 #dialog .stage-note{font-size:12px;color:#8d9bad;margin:6px 0 10px}
 @media(max-width:1180px){.forest-question{width:440px}.grove-tree{width:200px}.grove-tree img{width:140px;height:140px}.forest-bottom{grid-template-columns:minmax(0,1fr) 320px}}
-@media(max-width:900px){.forest-view{overflow-y:auto!important;height:auto;min-height:100%}.forest-top{flex-direction:column;gap:14px}.forest-question{width:100%}.forest-grove{height:auto;overflow:visible;padding:44px 12px 0;background:linear-gradient(180deg,#f7fbff,#eef6ea)}.grove-ground{display:none}.grove-trees{position:static;height:auto;flex-wrap:wrap;gap:14px;justify-content:center;padding:0 0 18px}.grove-tree{width:46%}.grove-tree.selected:after{display:none}.grove-plate{white-space:normal}.forest-bottom{grid-template-columns:1fr}.forest-detail{overflow:visible}.stage-badge.wide{white-space:normal}}
+@media(max-width:900px){.forest-view{height:auto;min-height:100%}.forest-top{flex-direction:column;gap:14px}.forest-question{width:100%}.forest-grove{height:auto;overflow:visible;padding:44px 12px 0;background:linear-gradient(180deg,#f7fbff,#eef6ea)}.grove-ground{display:none}.grove-trees{position:static;height:auto;flex-wrap:wrap;gap:14px;justify-content:center;padding:0 0 18px}.grove-tree{width:46%}.grove-tree.selected:after{display:none}.grove-plate{white-space:normal}.forest-bottom{grid-template-columns:1fr}.forest-detail{overflow:visible}.stage-badge.wide{white-space:normal}}
