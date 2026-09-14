@@ -231,16 +231,16 @@ body[data-view="garden"] #view-garden{animation:none}
 
 /* Article guide (option A): a small gold disc with a strong breathing glow and two faint expanding rings. */
 .g7 .article-guide-orb{position:absolute;left:720px;top:394px;width:96px;height:96px;z-index:9;padding:0;border:0;border-radius:50%;background:transparent;transform:translate(-50%,-50%);isolation:isolate}
-.g7 .article-guide-bloom{position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;background:radial-gradient(circle,#fff3c4e6 0,#ffe68ac0 24%,#ffe07a78 42%,#ffe07a2e 60%,#ffe07a00 76%);animation:article-guide-bloom 2.2s ease-in-out infinite}
-.g7 .article-guide-ring{position:absolute;left:50%;top:50%;width:96px;height:96px;transform:translate(-50%,-50%);border:2px solid #f2c443;border-radius:50%;pointer-events:none;opacity:0;animation:article-guide-ring 2.2s ease-out infinite}
-.g7 .article-guide-ring.r2{animation-delay:1.1s;border-width:1.5px}
-.g7 .article-guide-core{position:absolute;inset:5px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 40% 32%,#fffdf3 0,#fff6d6 36%,#ffe9a4 70%,#f6cf62 100%);box-shadow:0 0 0 4px #ffffffd8,0 0 0 8px #f5c84a,0 0 26px 10px #ffd95f99,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4;transition:transform .18s ease;animation:article-guide-core 2.2s ease-in-out infinite}
+.g7 .article-guide-bloom{position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;background:radial-gradient(circle,#fff3c4e6 0,#ffe68ac0 24%,#ffe07a78 42%,#ffe07a2e 60%,#ffe07a00 76%);animation:article-guide-bloom 2.4s ease-in-out infinite}
+.g7 .article-guide-ring{position:absolute;left:50%;top:50%;width:96px;height:96px;transform:translate(-50%,-50%);border:1.5px solid #f2c443;border-radius:50%;pointer-events:none;opacity:0;animation:article-guide-ring 2.4s ease-out infinite}
+.g7 .article-guide-ring.r2{animation-delay:1.2s;border-width:1px}
+.g7 .article-guide-core{position:absolute;inset:5px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 40% 32%,#fffdf3 0,#fff6d6 36%,#ffe9a4 70%,#f6cf62 100%);box-shadow:0 0 22px 8px #ffd95f8c,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4;transition:transform .18s ease;animation:article-guide-core 2.4s ease-in-out infinite}
 .g7 .article-guide-apple{width:46px;height:46px;margin-top:2px;filter:drop-shadow(0 2px 3px #a56e1840)}
 .g7 .article-guide-orb:hover .article-guide-core{transform:scale(1.06)}
 .g7 .article-guide-orb.is-pressing .article-guide-core{transform:scale(.9)}
-@keyframes article-guide-bloom{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.78)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}}
-@keyframes article-guide-core{0%,100%{box-shadow:0 0 0 4px #ffffffd8,0 0 0 8px #f5c84a,0 0 18px 6px #ffd95f80,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4}50%{box-shadow:0 0 0 4px #fffaf0,0 0 0 8px #ffd257,0 0 44px 18px #ffd95fd0,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffd8}}
-@keyframes article-guide-ring{0%{opacity:.7;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.3)}}
+@keyframes article-guide-bloom{0%,100%{opacity:.62;transform:translate(-50%,-50%) scale(.88)}50%{opacity:.95;transform:translate(-50%,-50%) scale(1.04)}}
+@keyframes article-guide-core{0%,100%{box-shadow:0 0 16px 6px #ffd95f78,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffc4}50%{box-shadow:0 0 30px 12px #ffd95fb8,inset 0 -6px 14px #e8b34a55,inset 0 3px 6px #ffffffd8}}
+@keyframes article-guide-ring{0%{opacity:.5;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.9)}}
 @media(max-width:700px){.g7 .article-guide-orb{left:720px;top:404px;transform:translate(-50%,-50%) scale(.9)}}
 /* Soil + roots are one fixed layer from the roots stage onward; trees stand on it without their own soil. */
 .g7 .soil-art,.g7 .seed-art{position:absolute;left:360px;top:109px;width:720px;height:720px;object-fit:contain;clip-path:inset(64% 0 0);z-index:1;pointer-events:none;filter:brightness(1.025) contrast(1.035)}
