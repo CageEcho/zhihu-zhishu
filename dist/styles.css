@@ -47,4 +47,4 @@ body[data-view="garden"]>.header{display:none}body[data-view="garden"] main{heig
 @media(hover:hover){.tree-hotspot b{opacity:0;visibility:hidden;transform:translateX(-6px);transition:opacity .18s ease,transform .18s ease,visibility 0s linear .18s;pointer-events:none}.tree-hotspot:hover b,.tree-hotspot:focus-visible b,.tree-hotspot[aria-pressed=true] b{opacity:1;visibility:visible;transform:none;transition-delay:0s;pointer-events:auto}}
 
 /* Header profile icon: colourful sprouting tree in a soft ring. */
-.user-button{border:1.5px solid #d6e5d3;background:#fff;box-shadow:0 2px 8px #3f6b3a14}.user-button:hover{border-color:#9cc394;box-shadow:0 3px 12px #3f6b3a22}
+.user-button{display:grid;place-items:center;padding:0;border:0;background:transparent;box-shadow:none;border-radius:8px;transition:transform .18s ease}.user-button:before,.user-button:after{display:none}.user-button svg{width:30px;height:30px;margin:0}.user-button:hover{border-color:transparent;box-shadow:none;transform:scale(1.08)}.user-button:hover{border-color:#9cc394;box-shadow:0 3px 12px #3f6b3a22}
