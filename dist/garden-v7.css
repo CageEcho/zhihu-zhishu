@@ -13,7 +13,7 @@
 .g7 .private{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:12px;color:#8c9ca9}
 .g7 .private svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5}
 .g7 .avatar{margin-left:9px;width:30px;height:30px;background:#edf4eb;border:1px solid #dce9d8;border-radius:50%;font-size:11px;color:#7e9e70;display:grid;place-items:center}
-.g7 .landscape{position:absolute;inset:82px 0 0;pointer-events:none;background:radial-gradient(ellipse at 50% 105%,#e8f0e5 0,transparent 49%)}
+.g7 .landscape{position:absolute;inset:82px 0 0;pointer-events:none;background:linear-gradient(180deg,transparent 0 48%,#f5f9f680 62%,#edf5efeb 100%),radial-gradient(ellipse at 50% 105%,#e4eee3 0,transparent 70%)}
 .g7 .horizon{position:absolute;top:548px;left:-90px;width:1610px;height:288px;background:linear-gradient(#eef5f480,#f8fcfb00);border-top:1px solid #e5eff054;border-radius:50% 50% 0 0;transform:rotate(-1deg)}
 .g7 .horizon:after{content:'';position:absolute;width:1700px;left:-20px;top:43px;height:250px;border-top:1px solid #dceadf63;border-radius:50%;transform:rotate(2deg)}
 .g7 .cloud{position:absolute;width:200px;height:60px;filter:blur(20px);background:white;border-radius:50%;opacity:.6}
