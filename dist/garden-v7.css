@@ -256,7 +256,10 @@ body[data-view="garden"] #view-garden{animation:none}
 @keyframes article-guide-hand{0%,30%,70%,100%{transform:translate(3px,4px) scale(1)}43%,52%{transform:translate(-3px,-3px) scale(.9)}}
 @media(max-width:700px){.g7 .article-guide-orb{left:720px;top:404px;transform:translate(-50%,-50%) scale(.9)}}
 /* Soil + roots are one fixed layer from the roots stage onward; trees stand on it without their own soil. */
-.g7 .soil-art{position:absolute;left:360px;top:109px;width:720px;height:720px;object-fit:contain;clip-path:inset(64% 0 0);z-index:1;pointer-events:none;filter:brightness(1.025) contrast(1.035)}
+.g7 .soil-art,.g7 .seed-art{position:absolute;left:360px;top:109px;width:720px;height:720px;object-fit:contain;clip-path:inset(64% 0 0);z-index:1;pointer-events:none;filter:brightness(1.025) contrast(1.035)}
+.g7 .seed-art{z-index:2;opacity:0}
+.g7.roots.growing .seed-art{animation:g7-seed-out 2.3s ease both}
+@keyframes g7-seed-out{0%,55%{opacity:1}100%{opacity:0}}
 .g7 .roots-svg{position:absolute;inset:0;z-index:2;pointer-events:none}
 .g7 .root-system{filter:drop-shadow(0 1px 1px #2b1b0c33)}
 .g7 .root-glow{opacity:0;mix-blend-mode:screen;filter:brightness(2.1) saturate(.25) blur(.6px) drop-shadow(0 0 6px #eafff0) drop-shadow(0 0 14px #b8f5c8)}
@@ -272,7 +275,7 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7.roots .g7-hit:hover{box-shadow:0 0 0 2px #b39a8955,0 0 24px #e3d5c866}
 .g7.branches .g7-hit[data-garden-action="branch"]:hover{box-shadow:0 0 0 2px #d2a07d66,0 0 24px #f2dfd177}
 /* Branches stage entrance: play the seed -> sprout -> trunk clip in place; the clip's own progress drives the hand-off to the bare tree art. */
-.g7 .sprout-clip{position:absolute;left:184px;top:143px;width:1114px;height:482px;overflow:hidden;z-index:2;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent 100%);opacity:1;transition:opacity .6s ease}
+.g7 .sprout-clip{position:absolute;left:184px;top:143px;width:1114px;height:477px;overflow:hidden;z-index:1;pointer-events:none;clip-path:polygon(0 0,100% 0,100% 438px,636px 477px,450px 477px,0 438px);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);opacity:1;transition:opacity .6s ease}
 .g7 .sprout-video{position:absolute;left:0;top:0;width:1114px;height:626px;object-fit:fill;mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 52% 62% at 50% 60%,#000 56%,transparent 100%);mask-image:radial-gradient(ellipse 52% 62% at 50% 60%,#000 56%,transparent 100%)}
 .g7.sprout .sprout-clip{opacity:0;transition:opacity .25s ease}
 .g7.sprout.sprout-live .sprout-clip{opacity:1;transition:opacity .6s ease}
