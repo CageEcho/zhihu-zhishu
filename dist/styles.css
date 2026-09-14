@@ -58,7 +58,7 @@ body[data-view="garden"]>.header{display:none}body[data-view="garden"] main{heig
 .tree-hotspot.flip b{left:auto;right:100%;margin-left:0;margin-right:12px;text-align:right!important;transform:translate(6px,-50%)}
 .tree-hotspot.flip b:before{left:auto;right:-16px}
 .tree-hotspot:hover b,.tree-hotspot:focus-visible b,.tree-hotspot[aria-pressed=true] b{transform:translate(0,-50%)}
-.fruit-hotspot{left:60%!important;top:23%!important}
+.fruit-hotspot{left:48.9%!important;top:19.9%!important}
 .leaf-hotspot{left:43.5%!important;top:39%!important}
 .trunk-hotspot{left:55.5%!important;top:60%!important}
 .root-hotspot{left:45%!important;top:86%!important}
