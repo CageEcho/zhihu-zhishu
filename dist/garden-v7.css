@@ -266,7 +266,15 @@ body[data-view="garden"] #view-garden{animation:none}
 .g7.roots .g7-hit:hover{box-shadow:0 0 0 2px #b39a8955,0 0 24px #e3d5c866}
 .g7.branches .g7-hit[data-garden-action="branch"]:hover{box-shadow:0 0 0 2px #d2a07d66,0 0 24px #f2dfd177}
 /* Branches stage entrance: the soil settles first, then the trunk and branches grow upward, then the cards arrive. */
-.g7.branches.growing .tree-art{transform-origin:50% 92%;animation:g7-tree-grow 1.7s cubic-bezier(.22,.8,.3,1) both}
+.g7.sprout .tree-art{transform-origin:50% 92%;animation:g7-tree-grow 1.7s cubic-bezier(.22,.8,.3,1) both}
 @keyframes g7-tree-grow{0%{opacity:0;clip-path:inset(100% 0 0);transform:translateY(14px) scale(.9)}16%{opacity:1;clip-path:inset(76% 0 0);transform:translateY(6px) scale(.94)}52%{clip-path:inset(42% 0 0);transform:translateY(2px) scale(.985)}82%{clip-path:inset(10% 0 0);transform:translateY(0) scale(1.01)}100%{clip-path:inset(-4% 0 0);transform:none}}
-.g7.branches.growing .scene-svg,.g7.branches.growing .node-tag,.g7.branches.growing .g7-hit,.g7.branches.growing .garden-root-overflow{animation:g7-tags-in .55s ease both 1.45s}
+.g7.sprout .scene-svg,.g7.sprout .node-tag,.g7.sprout .g7-hit,.g7.sprout .garden-root-overflow{animation:g7-tags-in .55s ease both 1.45s}
 @keyframes g7-tags-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* Canopy clusters are cut from the final canopy art and sit at their original positions; the 3/3 -> leaves switch crossfades. */
+.g7 .canopy-ghost{position:absolute;inset:0;z-index:2;pointer-events:none;animation:g7-ghost-out .9s ease both}
+.g7 .canopy-ghost .tree-art{animation:none!important;filter:none}
+.g7 .canopy-ghost .scene-svg{position:absolute;left:0;top:0;width:1440px;height:900px;animation:none!important}
+.g7.crossfade .tree-art:not(.canopy-ghost .tree-art){animation:g7-fade-in .9s ease both!important}
+.g7.crossfade .scene-svg:not(.canopy-ghost .scene-svg),.g7.crossfade .node-tag,.g7.crossfade .g7-hit,.g7.crossfade .article-guide-orb{animation-delay:.5s}
+@keyframes g7-ghost-out{from{opacity:1}to{opacity:0}}
+@keyframes g7-fade-in{from{opacity:0}to{opacity:1}}

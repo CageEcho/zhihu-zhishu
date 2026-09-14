@@ -27,7 +27,7 @@
   }
   function render(animate=false){
     syncFruits();window.renderZhishuGarden(garden,world);fit();
-    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);const hold=world.dataset.stage==='branches'?2150:1050;const art=world.querySelector('.tree-art');if(world.dataset.stage==='branches'&&art){art.addEventListener('animationstart',()=>{clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),hold);},{once:true});growTimer=setTimeout(()=>world.classList.remove('growing'),hold+2500);}else growTimer=setTimeout(()=>world.classList.remove('growing'),hold);}
+    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){world.classList.add('growing');clearTimeout(growTimer);const sprout=world.classList.contains('sprout');const hold=sprout?2150:1050;const art=world.querySelector('.tree-art');if(sprout&&art){art.addEventListener('animationstart',()=>{clearTimeout(growTimer);growTimer=setTimeout(()=>world.classList.remove('growing'),hold);},{once:true});growTimer=setTimeout(()=>world.classList.remove('growing'),hold+2500);}else growTimer=setTimeout(()=>world.classList.remove('growing'),hold);}
     persist();
   }
   function open(title,html,type){
@@ -167,7 +167,7 @@
       plant([{title,content,url:raw,personal:true}]);
     }
     if(form.id==='garden-viewpoint-form'){
-      const value=$('#garden-viewpoint').value.trim();if(!value){error('先写下一点自己的观点。');return;}garden.viewpoint=value;garden.viewpointDraft=value;close();render(true);
+      const value=$('#garden-viewpoint').value.trim();if(!value){error('先写下一点自己的观点。');return;}garden.viewpoint=value;garden.viewpointDraft=value;close();world.dataset.enter='branches';render(true);
     }
     if(form.id==='garden-dialogue-form'){
       const index=Number(form.dataset.round),value=$('#garden-answer').value.trim();if(!value){error('请写下一点想法，再让树叶生长。');return;}
@@ -176,7 +176,7 @@
       garden.answers[index]=value;garden.answerDrafts[index]=value;garden.presetUsed[index]=value===presets[index];close();clearTimeout(canopyTimer);
       if(wasIncomplete&&garden.answers.every(answer=>answer.trim())){
         world.dataset.canopyTransition='branches';render(true);
-        canopyTimer=setTimeout(()=>{delete world.dataset.canopyTransition;if(location.hash==='#garden')render(true);},2300);
+        canopyTimer=setTimeout(()=>{delete world.dataset.canopyTransition;world.dataset.canopyFrom='clusters';if(location.hash==='#garden')render(true);else delete world.dataset.canopyFrom;},2300);
       }else{delete world.dataset.canopyTransition;render(true);}
     }
     if(form.id==='garden-article-form'){
