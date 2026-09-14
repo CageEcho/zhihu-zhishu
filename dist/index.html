@@ -14,10 +14,11 @@
   <link rel="stylesheet" href="styles.css?v=28">
   <link rel="stylesheet" href="garden-v7.css?v=28">
   <link rel="stylesheet" href="navigation-v8.css">
+  <link rel="stylesheet" href="forest-v9.css?v=1">
   <script src="demo-reset.js" defer></script>
   <script src="data.js" defer></script>
   <script src="tree-store.js" defer></script>
-  <script src="app.js?v=23" defer></script>
+  <script src="app.js?v=24" defer></script>
   <script src="garden-scene.js?v=28" defer></script>
   <script src="history.js" defer></script>
   <script src="garden.js?v=26" defer></script>
@@ -93,22 +94,23 @@
     </section>
 
     <section id="view-forest" class="view page-view forest-view" hidden>
-      <div class="forest-heading">
-        <div><div class="eyebrow"><span></span> 同一个问题，不同人的知识果实</div><h1>走进同题树林，<br>看看别人怎么想。</h1><p>阅读、提出具体异见，或把有价值的文章采集为自己的带来源根系。</p></div>
-        <div class="forest-canopy" aria-label="三棵代表不同观点的知识树"><img src="assets/tree-fruit.png" alt=""><img src="assets/tree-fruit.png" alt=""><img src="assets/tree-fruit.png" alt=""></div>
+      <div class="forest-top">
+        <div class="forest-intro"><div class="eyebrow"><span></span> 同一个问题，不同人的知识果实</div><h1>走进同题树林，看看别人怎么想。</h1><p>每棵树是一个人的思考。点一棵树，看它长到了哪一步、根系来自哪里；可以提出异见，或把它采集成自己的根系。</p></div>
+        <div class="forest-question"><small id="forest-question-meta">当前问题</small><div id="forest-question" class="forest-question-title"></div><div id="forest-topic-tabs" class="forest-topic-tabs" role="tablist" aria-label="选择同题树林"></div></div>
       </div>
-      <div class="forest-toolbar">
-        <div id="forest-topic-tabs" class="forest-topic-tabs" role="tablist" aria-label="选择同题树林"></div>
-        <div class="forest-legend"><span class="near">相近</span><span class="dissent">有异见</span><span class="add">补充</span></div>
+      <div class="forest-grove">
+        <div class="grove-hint">🌱 树的阶段 = 每个人的思考进度 <em>· 点击一棵树查看</em></div>
+        <div class="grove-legend" aria-label="生长阶段图例"><span class="seed">种子 · 收藏</span><span class="branches">树干 · 观点</span><span class="leaves">树叶 · 对话</span><span class="fruit">结果 · 文章</span></div>
+        <div class="grove-ground"></div>
+        <div id="forest-trees" class="grove-trees"></div>
       </div>
-      <div class="forest-layout">
-        <div id="forest-list" class="forest-list"></div>
+      <div class="forest-bottom">
+        <div id="forest-detail" class="forest-detail"></div>
         <aside class="forest-guide">
-          <div class="guide-tree"><img src="assets/tree-bare.png" alt="根系示意"><span id="forest-root-total">12</span></div>
-          <h2>一篇文章，还能继续生长。</h2>
-          <div class="forest-rule"><b>01</b><p><strong>查看果实</strong>看结论、理由和来源根系。</p></div>
-          <div class="forest-rule"><b>02</b><p><strong>提出异见</strong>针对观点提问，不针对人。</p></div>
-          <div class="forest-rule"><b>03</b><p><strong>采集为根系</strong>保留作者和引用链，不等于认同。</p></div>
+          <h2>在树林里，你可以做三件事</h2><p class="forest-guide-lead">阅读、交流，让思考继续生长。</p>
+          <div class="forest-rule"><b class="ic fruit">🍎</b><p><strong>查看果实</strong>看结论、理由和来源根系，判断它站得住吗。</p></div>
+          <div class="forest-rule"><b class="ic dissent">✎</b><p><strong>提出异见</strong>针对观点提问，不针对人；作者会在树下回应。</p></div>
+          <div class="forest-rule"><b class="ic collect">⤵</b><p><strong>采集为根系</strong>把别人的果实种进自己的土壤，保留作者和引用链，不等于认同。</p></div>
           <small>本页为好友互动演示，所有知友和互动均为预设，不会真的发送。</small>
         </aside>
       </div>

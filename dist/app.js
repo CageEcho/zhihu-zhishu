@@ -138,6 +138,7 @@
       author: '我',
       initials: '我',
       relation: '我的',
+      stage: 'fruit',
       publishedAt: '刚刚发布',
       rootCount: (work.sources || topic.sources).length,
       views: 0,
@@ -165,9 +166,19 @@
     return relation === '有异见' ? 'dissent' : relation === '补充' ? 'add' : relation === '我的' ? 'mine' : 'near';
   }
 
+  const STAGES = {
+    seed: { rank: 0, label: '种子', badge: '种子', img: 'soil-seed-v4-transparent.png', line: (post) => `种子 · 已收藏 ${post.rootCount} 条`, desc: '种子阶段 · 还在收藏来源，观点尚未长出', view: '查看根系 →' },
+    branches: { rank: 1, label: '树干', badge: '树干', img: 'tree-bare.png', line: () => '树干 · 观点已立', desc: '树干阶段 · 观点已立，还没展开对话', view: '查看这棵树 →' },
+    leaves: { rank: 2, label: '树叶', badge: '树叶', img: 'tree-full.png', line: () => '树叶 · 3 轮对话完成', desc: '树叶阶段 · 3 轮对话完成，尚未结果', view: '查看这棵树 →' },
+    fruit: { rank: 3, label: '结果', badge: '红果', img: 'tree-fruit-red.png', line: () => '结果 · 文章已发布', desc: '结果阶段 · 文章已发布，果实可采集', view: '查看果实 →' }
+  };
+  function stageOf(post) { return STAGES[post.stage] || STAGES.fruit; }
+  let forestSelectedId = null;
+
   function forestItems(topicId) {
     const mine = state.works.filter((work) => work.topicId === topicId && state.publishedWorkIds.includes(work.id)).map(ownFruit);
-    return [...mine, ...DATA.forestPosts.filter((post) => post.topicId === topicId)];
+    const others = DATA.forestPosts.filter((post) => post.topicId === topicId).sort((x, y) => stageOf(y).rank - stageOf(x).rank);
+    return [...mine, ...others];
   }
 
   function renderForest() {
@@ -175,20 +186,44 @@
     currentTopic = topic;
     const items = forestItems(topic.id);
     $('#forest-topic-tabs').innerHTML = DATA.topics.map((item) => `<button role="tab" aria-selected="${item.id === topic.id}" class="${item.id === topic.id ? 'active' : ''}" data-action="set-forest-topic" data-topic="${esc(item.id)}"><span>${esc(item.order)}</span>${esc(item.short)}</button>`).join('');
-    $('#forest-list').innerHTML = items.map((post) => {
-      const collected = state.adoptedRoots.some((root) => root.fruitId === post.id);
-      const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
-      return `<article class="fruit-card ${post.mine ? 'own-fruit' : ''}">
-        <div class="fruit-card-head"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : '演示知友'} · ${esc(post.publishedAt)}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div>
-        <div class="fruit-tree"><img src="assets/tree-fruit.png" alt="${esc(post.author)}文章结出的知识果实"><span>${post.rootCount} 条根系</span></div>
-        <h2>${esc(post.title)}</h2>
-        <p>${esc(post.summary)}</p>
-        <div class="fruit-stats"><span>${post.views + (post.mine ? 1 : 0)} 阅读</span><span>${post.dissentCount + (dissent ? 1 : 0)} 异见</span><span>${post.collectCount + (collected ? 1 : 0)} 采集</span><b>来源可追溯</b></div>
-        <div class="fruit-actions"><button data-action="view-fruit" data-id="${esc(post.id)}">查看果实</button>${post.mine ? '<span>这是你的果实</span>' : `<button class="${dissent ? 'done' : ''}" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '已提出异见' : '提出异见'}</button><button class="${collected ? 'done' : ''}" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '已成为根系 ✓' : '采集为根系'}</button>`}</div>
-      </article>`;
+    $('#forest-question').textContent = topic.title;
+    const fruited = items.filter((post) => stageOf(post).rank === 3).length;
+    $('#forest-question-meta').textContent = `当前问题 · ${items.length} 棵树 · ${fruited} 棵已结果`;
+    if (!items.some((post) => post.id === forestSelectedId)) forestSelectedId = (items.find((post) => !post.mine) || items[0])?.id || null;
+    const hasMine = items.some((post) => post.mine);
+    const placeholder = hasMine ? '' : `<a class="grove-tree placeholder" href="#garden"><span class="grove-flag">我的</span><span class="grove-empty"><b>你的树还没种在这里</b><small>完成文章并发布后，会出现在树林第一位</small><em>去我的知树 →</em></span></a>`;
+    $('#forest-trees').innerHTML = placeholder + items.map((post) => {
+      const st = stageOf(post);
+      return `<button type="button" class="grove-tree stage-${esc(post.stage || 'fruit')} ${post.mine ? 'mine' : ''} ${post.id === forestSelectedId ? 'selected' : ''}" data-action="select-tree" data-id="${esc(post.id)}" aria-pressed="${post.id === forestSelectedId}" aria-label="${esc(post.author)} · ${st.label}">
+        ${post.mine ? '<span class="grove-flag">我的</span>' : ''}
+        <img src="assets/${st.img}" alt="">
+        <span class="grove-plate"><span class="friend-avatar ${relationClass(post.relation)}">${esc(post.initials)}</span><span class="grove-name"><b>${esc(post.author)}</b><small><i></i>${esc(st.line(post))}</small></span><em class="stage-badge">${st.badge}</em></span>
+      </button>`;
     }).join('');
-    $('#forest-root-total').textContent = items.reduce((total, item) => total + item.rootCount, 0);
+    renderForestDetail(items.find((post) => post.id === forestSelectedId), topic);
     syncNavCounts();
+  }
+
+  function renderForestDetail(post, topic) {
+    const box = $('#forest-detail');
+    if (!post) { box.innerHTML = '<p class="forest-detail-empty">这片树林还没有树。</p>'; return; }
+    const st = stageOf(post);
+    const collected = state.adoptedRoots.some((root) => root.fruitId === post.id);
+    const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
+    const rank = st.rank;
+    const headline = rank === 0 ? `围绕「${topic.short}」的收藏，还在扎根` : rank === 1 ? post.summary : post.title;
+    const lead = rank === 0 ? `已收藏 ${post.rootCount} 条来源，观点还没有长出来。` : rank === 1 ? '观点已经立住，还没有展开对话与理由。' : post.summary;
+    const roots = post.roots.slice(0, 3).map((root) => `<span>${esc(root)}</span>`).join('') + (post.rootCount > Math.min(post.roots.length, 3) ? `<span class="more">+${post.rootCount - Math.min(post.roots.length, 3)}</span>` : '');
+    const stats = rank === 0 ? `<span><b>${post.rootCount}</b>条收藏</span>` : `<span><b>${post.views + (post.mine ? 1 : 0)}</b>阅读</span><span><b>${post.dissentCount + (dissent ? 1 : 0)}</b>异见</span><span><b>${post.collectCount + (collected ? 1 : 0)}</b>次被采集为根系</span>`;
+    const actions = post.mine
+      ? `<button class="btn primary" data-action="view-fruit" data-id="${esc(post.id)}">查看果实 →</button><button class="btn" data-action="return-to-tree" data-id="${esc(post.workId)}">回到这棵树</button><span class="own-note">这是你的果实</span>`
+      : `<button class="btn primary" data-action="view-fruit" data-id="${esc(post.id)}">${st.view}</button>${rank > 0 ? `<button class="btn dissent ${dissent ? 'done' : ''}" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '✓ 已提出异见' : '✎ 提出异见'}</button>` : '<span class="own-note">观点长出来后，才能提出异见</span>'}<button class="btn collect ${collected ? 'done' : ''}" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '✓ 已成为我的根系' : '⤵ 采集为我的根系'}</button>`;
+    box.className = `forest-detail stage-${esc(post.stage || 'fruit')}`;
+    box.innerHTML = `<div class="detail-head"><span class="friend-avatar ${relationClass(post.relation)}">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : '演示知友'} · ${esc(post.publishedAt)}</small></div><em class="stage-badge wide">${esc(st.desc)}</em></div>
+      <h2>${esc(headline)}</h2><p>${esc(lead)}</p>
+      <div class="detail-roots"><label>这棵树的根系</label>${roots}</div>
+      <div class="detail-stats">${stats}<span class="ok">✓ 根系来源可追溯</span></div>
+      <div class="detail-actions">${actions}</div>`;
   }
 
   function showFruit(id) {
@@ -197,7 +232,9 @@
     const collected = state.adoptedRoots.some((root) => root.fruitId === post.id);
     const dissent = state.socialActions.find((action) => action.type === 'dissent' && action.fruitId === post.id);
     const thread = dissent ? `<section class="friend-thread"><div class="thread-head">你和 ${esc(post.author)} 的异见对话 <span>演示互动</span></div><div class="thread-message mine"><b>我提出的问题</b><p>${esc(dissent.content)}</p></div><div class="thread-message"><b>${esc(post.author)} 回复</b><p>${esc(post.reply)}</p></div></section>` : '';
-    showDialog(post.title, `<div class="fruit-detail-author"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : `演示知友 · ${esc(post.publishedAt)}`}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div><p class="fruit-detail-summary">${esc(post.summary)}</p><div class="fruit-body">${post.body.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}</div><div class="fruit-roots"><b>这颗果实的来源根系</b>${post.roots.map((root, index) => `<span>[${index + 1}] ${esc(root)}</span>`).join('')}<small>来源链随果实一起保留；采集不转移内容所有权。</small></div>${thread}<div class="dialog-actions fruit-dialog-actions">${post.mine ? `<button class="primary-button" data-action="return-to-tree" data-id="${esc(post.workId)}">回到这棵树 →</button>` : `<button class="quiet-button" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '查看 / 修改异见' : '提出一个具体异见'}</button><button class="primary-button" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '已采集为根系 ✓' : '采集为我的根系 →'}</button>`}</div>`);
+    const st = stageOf(post); const rank = st.rank;
+    const dialogTitle = rank === 0 ? `${post.author} 的根系` : rank === 1 ? `${post.author} 的观点` : post.title;
+    showDialog(dialogTitle, `<div class="fruit-detail-author"><span class="friend-avatar">${esc(post.initials)}</span><div><b>${esc(post.author)}</b><small>${post.mine ? '我的已发布作品' : `演示知友 · ${esc(post.publishedAt)}`}</small></div><em class="relation ${relationClass(post.relation)}">${esc(post.relation)}</em></div><p class="stage-note">${esc(st.desc)}</p>${rank === 0 ? '<p class="fruit-detail-summary">这棵树还在收藏阶段：来源已经扎根，观点长出来后才能提出异见。</p>' : `<p class="fruit-detail-summary">${esc(post.summary)}</p>`}${rank >= 2 ? `<div class="fruit-body">${post.body.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}</div>` : ''}<div class="fruit-roots"><b>${rank === 3 ? '这颗果实的来源根系' : '这棵树目前的根系'}</b>${post.roots.map((root, index) => `<span>[${index + 1}] ${esc(root)}</span>`).join('')}<small>来源链随果实一起保留；采集不转移内容所有权。</small></div>${thread}<div class="dialog-actions fruit-dialog-actions">${post.mine ? `<button class="primary-button" data-action="return-to-tree" data-id="${esc(post.workId)}">回到这棵树 →</button>` : `${rank > 0 ? `<button class="quiet-button" data-action="open-dissent" data-id="${esc(post.id)}">${dissent ? '查看 / 修改异见' : '提出一个具体异见'}</button>` : ''}<button class="primary-button" data-action="collect-root" data-id="${esc(post.id)}">${collected ? '已采集为根系 ✓' : '采集为我的根系 →'}</button>`}</div>`);
   }
 
   function openDissent(id) {
@@ -211,10 +248,10 @@
     const post = fruitById(id);
     if (!post || post.mine) return;
     if (state.adoptedRoots.some((root) => root.fruitId === id)) {
-      toast('这颗果实已经在你的根系里。');
+      toast('这棵树已经在你的根系里。');
       return;
     }
-    showDialog('把这颗果实采集为根系？', `<p>采集后会保留文章卡、作者、采集时间和上游来源链，保留在“历史记录”的收藏来源里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
+    showDialog(stageOf(post).rank === 3 ? '把这颗果实采集为根系？' : '把这棵树采集为根系？', `<p>采集后会保留${stageOf(post).rank === 3 ? '文章卡' : '这棵树的观点与来源'}、作者、采集时间和上游来源链，保留在“历史记录”的收藏来源里。</p><div class="dialog-note"><b>${esc(post.author)}：</b>${esc(post.title)}<br>${esc(post.summary)}</div><p><strong>采集不代表认同。</strong>它不会直接变成你的观点，也不会让树结果；以后围绕它创作时，你仍需完成自己的表达。</p><div class="dialog-actions"><button class="quiet-button" data-action="view-fruit" data-id="${esc(id)}">再读一遍</button><button class="primary-button" data-action="confirm-collect" data-id="${esc(id)}">确认采集为根系 →</button></div>`);
   }
 
   function markdown(work) {
@@ -284,7 +321,9 @@
       $('#tree-note').hidden = false;
     },
     profile: () => showDialog('演示账户', `<p>这是一套本机 DEMO 数据，不代表真实知乎账号状态。</p><div class="profile-stats"><div><b>${12 + state.userSources.length + state.adoptedRoots.length}</b><span>条根系</span></div><div><b>${state.works.length}</b><span>篇作品</span></div><div><b>${state.publishedWorkIds.length}</b><span>颗公开果实</span></div></div><div class="dialog-actions"><button class="primary-button" data-action="close-dialog">知道了</button></div>`),
+    'select-tree': (button) => { forestSelectedId = button.dataset.id; renderForest(); },
     'set-forest-topic': (button) => {
+      forestSelectedId = null;
       state.forestTopicId = topicById(button.dataset.topic).id;
       save();
       renderForest();
@@ -319,6 +358,7 @@
       const id = pendingDissent.fruitId;
       pendingDissent = null;
       save();
+      if (!$('#view-forest').hidden) renderForest();
       showFruit(id);
       toast('异见已加入演示对话，对方给出了回应。');
     },

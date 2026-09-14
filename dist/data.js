@@ -224,7 +224,7 @@ window.ZHISHU_DATA = {
   ],
   forestPosts: [
     {
-      id: "fruit-ai-lin", topicId: "ai-learning", author: "林澈", initials: "林", relation: "相近", publishedAt: "今天 09:42", rootCount: 4, views: 128, dissentCount: 2, collectCount: 17,
+      id: "fruit-ai-lin", topicId: "ai-learning", author: "林澈", initials: "林", relation: "相近", stage: "leaves", publishedAt: "今天 09:42", rootCount: 4, views: 128, dissentCount: 2, collectCount: 17,
       title: "AI 可以帮我更快，但不能替我解释",
       summary: "我接受 AI 参与资料整理和结构检查，但最后必须能关掉工具，自己讲清推理与来源。",
       body: ["我以前把“用了 AI”简单理解成偷懒，真正写过几次课程报告后，发现问题没有这么二元。AI 最有价值的地方，是帮我快速看见遗漏的角度。", "但效率不能成为省略理解的理由。现在我会保留最初提纲、核对关键来源，并在提交前关掉答案重新讲一遍。如果讲不清，那一段就还不属于我。"],
@@ -233,7 +233,7 @@ window.ZHISHU_DATA = {
       reply: "这是个好提醒。我说的“先自己想”不是硬撑，而是先留下自己卡住的位置；基础很弱时，AI 可以更早介入，但最好先给提示而不是完整答案。"
     },
     {
-      id: "fruit-ai-yao", topicId: "ai-learning", author: "阿遥", initials: "遥", relation: "有异见", publishedAt: "昨天 21:16", rootCount: 3, views: 96, dissentCount: 5, collectCount: 9,
+      id: "fruit-ai-yao", topicId: "ai-learning", author: "阿遥", initials: "遥", relation: "有异见", stage: "branches", publishedAt: "昨天 21:16", rootCount: 3, views: 96, dissentCount: 5, collectCount: 9,
       title: "“先自己想”不该成为新的学习道德",
       summary: "对初学者来说，及时看到一个可模仿的范例可能比长时间独立卡住更有效，关键是之后有没有重做。",
       body: ["我不认同把“先独立思考”当成所有人的统一起点。面对完全陌生的知识，初学者可能连错误发生在哪里都不知道，过长的无效尝试只会消耗信心。", "我更看重帮助之后发生什么：有没有关掉答案重做，有没有解释关键步骤，有没有把范例迁移到新问题。使用顺序不如理解检查重要。"],
@@ -242,7 +242,7 @@ window.ZHISHU_DATA = {
       reply: "确实会有这个风险，所以我会把“看完马上做一道变式题”作为必要步骤。只复述范例不算完成，能迁移才算。"
     },
     {
-      id: "fruit-ai-qiao", topicId: "ai-learning", author: "乔木", initials: "乔", relation: "补充", publishedAt: "3 天前", rootCount: 5, views: 204, dissentCount: 3, collectCount: 26,
+      id: "fruit-ai-qiao", topicId: "ai-learning", author: "乔木", initials: "乔", relation: "补充", stage: "seed", publishedAt: "3 天前", rootCount: 5, views: 204, dissentCount: 3, collectCount: 26,
       title: "判断 AI 是否越界，不要只看用了多久",
       summary: "比“先想十分钟”更可靠的边界，是能否复述判断、核验事实，并对最后提交的内容负责。",
       body: ["把边界定成“先自己想十分钟”很容易执行，但不一定准确。简单问题可能两分钟就够，陌生问题即使想半小时也没有进展。", "我更愿意用三个检查：能不能说明为什么这样写，关键事实有没有独立来源，换一个相似问题能不能自己完成。时间只是弱信号。"],
@@ -251,7 +251,7 @@ window.ZHISHU_DATA = {
       reply: "有可能，所以我会在提问 AI 前先写一句自己的初步判断。哪怕不成熟，也能留下思路起点，之后再比较发生了什么变化。"
     },
     {
-      id: "fruit-intern-mai", topicId: "internship", author: "麦子", initials: "麦", relation: "相近", publishedAt: "今天 11:08", rootCount: 4, views: 76, dissentCount: 1, collectCount: 12,
+      id: "fruit-intern-mai", topicId: "internship", author: "麦子", initials: "麦", relation: "相近", stage: "leaves", publishedAt: "今天 11:08", rootCount: 4, views: 76, dissentCount: 1, collectCount: 12,
       title: "实习要趁早，但每一段都要回答一个问题",
       summary: "早点体验职场有用，但目标应该是验证岗位、行业或工作方式，而不是单纯增加简历行数。",
       body: ["我支持尽早做一次短实习，因为课堂很难还原真实团队里的协作和取舍。第一次实习最重要的收获，是知道自己不喜欢什么。", "但如果说不清这段实习要验证什么，我不会为了数量继续投。每一段经历都应该留下一个判断，而不只是一个公司名字。"],
@@ -260,7 +260,7 @@ window.ZHISHU_DATA = {
       reply: "基础工作也能观察行业，但要设一个止损点。如果长期没有反馈、没有接触核心流程，就不值得为了“有一段”继续耗时间。"
     },
     {
-      id: "fruit-intern-zhou", topicId: "internship", author: "周周", initials: "周", relation: "有异见", publishedAt: "昨天 18:34", rootCount: 3, views: 143, dissentCount: 4, collectCount: 8,
+      id: "fruit-intern-zhou", topicId: "internship", author: "周周", initials: "周", relation: "有异见", stage: "branches", publishedAt: "昨天 18:34", rootCount: 3, views: 143, dissentCount: 4, collectCount: 8,
       title: "大一不实习，不等于落后",
       summary: "大学前期的基础课、社团和探索也会形成能力，不必把就业焦虑提前变成四年的唯一主线。",
       body: ["我大一没有实习，反而用一年时间把专业基础、写作和社团协作补起来。大二再投时，我更能判断岗位是不是适合自己。", "就业准备当然重要，但大学不是只有简历积累。过早把所有选择都换算成求职回报，也可能失去低成本探索的机会。"],
@@ -269,7 +269,7 @@ window.ZHISHU_DATA = {
       reply: "会有这个成本，所以我不是主张完全不接触职场，而是用访谈、项目和短期体验先探索，不一定马上进入高强度长期实习。"
     },
     {
-      id: "fruit-intern-lan", topicId: "internship", author: "柯蓝", initials: "蓝", relation: "补充", publishedAt: "4 天前", rootCount: 6, views: 182, dissentCount: 2, collectCount: 21,
+      id: "fruit-intern-lan", topicId: "internship", author: "柯蓝", initials: "蓝", relation: "补充", stage: "seed", publishedAt: "4 天前", rootCount: 6, views: 182, dissentCount: 2, collectCount: 21,
       title: "把探索型实习和求职型实习分开",
       summary: "低年级实习适合了解方向，高年级实习才承担求职转化；两种目标不该用同一套标准衡量。",
       body: ["很多争论把所有实习当成同一种事。低年级的一两周体验，是为了看见真实工作；高年级的三个月项目，才更强调成果和转正。", "分清目标后，早与晚就不再是唯一问题。探索型经历可以短而广，求职型经历应该少而深。"],
@@ -278,7 +278,7 @@ window.ZHISHU_DATA = {
       reply: "会，所以一次体验不能直接下结论。我会同时做从业者访谈，并记录“我看到的只是哪个团队、哪个岗位”，避免把局部当全貌。"
     },
     {
-      id: "fruit-career-man", topicId: "career-choice", author: "小满", initials: "满", relation: "相近", publishedAt: "今天 08:20", rootCount: 4, views: 119, dissentCount: 2, collectCount: 15,
+      id: "fruit-career-man", topicId: "career-choice", author: "小满", initials: "满", relation: "相近", stage: "leaves", publishedAt: "今天 08:20", rootCount: 4, views: 119, dissentCount: 2, collectCount: 15,
       title: "兴趣不是职业名称，而是愿意重复做的事",
       summary: "与其问喜欢哪个行业，不如拆开看自己是否愿意长期做其中那些普通、重复又具体的任务。",
       body: ["我曾以为喜欢电影就适合影视行业，真正做过项目后才发现，我喜欢的是分析作品，不喜欢高频沟通和临时改稿。", "职业兴趣不能只看高光时刻。我现在会问：这份工作最普通的一天是什么样，我愿不愿意连续做两年？"],
@@ -287,7 +287,7 @@ window.ZHISHU_DATA = {
       reply: "确实不能只看耐受力。我想表达的是先去掉职业滤镜，再同时看成长、价值感和现实回报，而不是把忍耐当成兴趣。"
     },
     {
-      id: "fruit-career-li", topicId: "career-choice", author: "阿礼", initials: "礼", relation: "有异见", publishedAt: "2 天前", rootCount: 3, views: 88, dissentCount: 3, collectCount: 6,
+      id: "fruit-career-li", topicId: "career-choice", author: "阿礼", initials: "礼", relation: "有异见", stage: "branches", publishedAt: "2 天前", rootCount: 3, views: 88, dissentCount: 3, collectCount: 6,
       title: "第一份工作没有我们想象得那么决定命运",
       summary: "起点会影响路径，但把第一次选择看得过重，也会让人不敢行动；更重要的是持续获得反馈和调整。",
       body: ["我换过三次方向，回头看第一份工作当然留下了影响，但它没有决定后面的全部选择。真正限制我的，是把转向理解成失败。", "刚毕业时信息有限，要求一次选对并不现实。先选择一个能学习、能获得反馈的环境，再定期复盘，比追求完美起点更可行。"],
@@ -296,7 +296,7 @@ window.ZHISHU_DATA = {
       reply: "起点是重要信号，但不是命运。我会给第一份工作设置半年和一年的检查点，看技能、行业和生活状态是否继续值得投入。"
     },
     {
-      id: "fruit-career-cheng", topicId: "career-choice", author: "程野", initials: "程", relation: "补充", publishedAt: "5 天前", rootCount: 5, views: 167, dissentCount: 1, collectCount: 19,
+      id: "fruit-career-cheng", topicId: "career-choice", author: "程野", initials: "程", relation: "补充", stage: "seed", publishedAt: "5 天前", rootCount: 5, views: 167, dissentCount: 1, collectCount: 19,
       title: "兴趣与就业的排序，取决于你有多少缓冲",
       summary: "同一个选择对不同家庭意味着不同风险，讨论兴趣时也要承认收入底线和试错成本。",
       body: ["“追兴趣还是看就业”经常被讨论成价值观选择，却忽略了每个人的经济缓冲不同。有人可以花一年试错，有人毕业后必须立刻承担生活费。", "承认现实底线不是背叛兴趣。更可行的做法，是先算清自己能承受的风险，再在这个范围里争取喜欢和成长。"],
@@ -305,7 +305,7 @@ window.ZHISHU_DATA = {
       reply: "所以底线应该是具体数字和期限，不是无限推迟的理由。达到缓冲目标后，要给兴趣安排明确的项目或转向窗口。"
     },
     {
-      id: "fruit-collection-ye", topicId: "collections", author: "拾页", initials: "页", relation: "相近", publishedAt: "今天 10:05", rootCount: 4, views: 151, dissentCount: 2, collectCount: 31,
+      id: "fruit-collection-ye", topicId: "collections", author: "拾页", initials: "页", relation: "相近", stage: "leaves", publishedAt: "今天 10:05", rootCount: 4, views: 151, dissentCount: 2, collectCount: 31,
       title: "收藏的终点不是整理，而是用一次",
       summary: "只有资料进入写作、决策或实践，它才从“以后可能有用”变成自己真正能调用的东西。",
       body: ["我曾经花很多时间整理标签，却很少真正打开笔记。后来我把规则改成：新收藏必须绑定一个正在做的问题，否则只放进临时箱。", "最有效的动作不是重新分类，而是在一周内使用一次。写一句判断、改一个方案、讲给别人听，都比继续囤积更接近学习。"],
@@ -314,7 +314,7 @@ window.ZHISHU_DATA = {
       reply: "会，所以我只对普通干货设短期规则。法规、手册和长期参考资料可以进入资料库，但要和“我正在学习的内容”分开管理。"
     },
     {
-      id: "fruit-collection-cen", topicId: "collections", author: "岑一", initials: "岑", relation: "有异见", publishedAt: "昨天 20:11", rootCount: 3, views: 72, dissentCount: 4, collectCount: 7,
+      id: "fruit-collection-cen", topicId: "collections", author: "岑一", initials: "岑", relation: "有异见", stage: "branches", publishedAt: "昨天 20:11", rootCount: 3, views: 72, dissentCount: 4, collectCount: 7,
       title: "不是每条收藏都必须变成输出",
       summary: "收藏夹也可以是一座参考图书馆；问题不在于全部没学会，而在于把资料库误当成能力证明。",
       body: ["我不赞成要求每条收藏都立刻输出。工具手册、旅行攻略、以后可能查的资料，本来就不需要全部内化。", "真正需要改变的，是我们对收藏的期待：资料库负责可查，学习项目负责理解，作品负责表达。它们不该混成一个任务。"],
@@ -323,7 +323,7 @@ window.ZHISHU_DATA = {
       reply: "关键是给资料库设置淘汰规则和检索入口。半年从未被搜索、也没有长期参考价值的内容可以清理，而不是要求每条都学习。"
     },
     {
-      id: "fruit-collection-bai", topicId: "collections", author: "白果", initials: "白", relation: "补充", publishedAt: "3 天前", rootCount: 5, views: 193, dissentCount: 1, collectCount: 24,
+      id: "fruit-collection-bai", topicId: "collections", author: "白果", initials: "白", relation: "补充", stage: "seed", publishedAt: "3 天前", rootCount: 5, views: 193, dissentCount: 1, collectCount: 24,
       title: "比标签更重要的是：我会在什么问题下想起它",
       summary: "收藏时记录一个未来的使用场景，比增加更多分类更容易让资料在需要时重新出现。",
       body: ["以前我会给一条内容打五六个标签，真正需要时还是想不起它。后来我只加一句：下次遇到什么问题时看这条？", "这个问题像一根索引，把资料和行动场景连起来。分类帮助存放，使用提示才帮助调用。"],
